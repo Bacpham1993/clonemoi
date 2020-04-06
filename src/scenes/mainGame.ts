@@ -5,8 +5,8 @@ export class mainGame extends Phaser.Scene {
     private doctor;
     private rotation_dir = 0.01;
     private pod_status = 'rotate';
-    private initTime = 1;
-    private gameTime = 5;
+    private initTime = 2;
+    private gameTime = 10;
     private timeText;
     private diamondPick;
     private textPick;
