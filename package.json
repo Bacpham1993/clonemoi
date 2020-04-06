@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "rollup --config rollup.config.dev.js",
         "build": "rollup --config rollup.config.dist.js",
-        "watch": "rollup --watch --config rollup.config.dev.js"
+        "watch": "rollup --watch --config rollup.config.dev.js",
+        "start": "node dist/index.js"
     },
     "repository": {
         "type": "git",
@@ -19,6 +20,7 @@
     },
     "homepage": "https://github.com/photonstorm/phaser3-typescript-project-template#readme",
     "dependencies": {
+        "express": "^4.17.1",
         "phaser3-rex-plugins": "^1.1.8"
     },
     "devDependencies": {
