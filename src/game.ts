@@ -1,47 +1,53 @@
-import 'phaser';
+import "phaser";
+// import RotateToPlugin from 'phaser3-rex-plugins/plugins/rotateto-plugin.js';
+import { bootGame } from "./scenes/bootGame";
+import { guideGame } from "./scenes/guideGame";
+import { mainGame } from "./scenes/mainGame";
 
-export default class Demo extends Phaser.Scene
-{
-    constructor ()
-    {
-        super('demo');
+const config: Phaser.Types.Core.GameConfig = {
+  title: "Gold Miner by Bac Pham",
+  version: "1.0",
+  width: window.innerWidth,
+  height: window.innerHeight,
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  },
+  // resolution: window.devicePixelRatio,
+  type: Phaser.AUTO,
+  scene: [bootGame, guideGame, mainGame],
+  physics: {
+    default: 'arcade',
+    arcade: {
+        fps: 60,
+        gravity: { y: 0 },
+        // debug: true
     }
-
-    preload ()
-    {
-        this.load.image('logo', 'assets/phaser3-logo.png');
-        this.load.image('libs', 'assets/libs.png');
-        this.load.glsl('bundle', 'assets/plasma-bundle.glsl.js');
-        this.load.glsl('stars', 'assets/starfields.glsl.js');
-    }
-
-    create ()
-    {
-        this.add.shader('RGB Shift Field', 0, 0, 800, 600).setOrigin(0);
-
-        this.add.shader('Plasma', 0, 412, 800, 172).setOrigin(0);
-
-        this.add.image(400, 300, 'libs');
-
-        const logo = this.add.image(400, 70, 'logo');
-
-        this.tweens.add({
-            targets: logo,
-            y: 350,
-            duration: 1500,
-            ease: 'Sine.inOut',
-            yoyo: true,
-            repeat: -1
-        })
-    }
-}
-
-const config = {
-    type: Phaser.AUTO,
-    backgroundColor: '#125555',
-    width: 800,
-    height: 600,
-    scene: Demo
+  },
+  input: {
+    keyboard: true,
+    mouse: true,
+    touch: true,
+    gamepad: false
+  },
+  // plugins: {
+  //   global: [{
+  //       key: 'rexRotateTo',
+  //       plugin: RotateToPlugin,
+  //       start: true,
+  //   },
+  //   ]
+  // },
+  backgroundColor: "#000000",
+  render: { pixelArt: true, antialias: false }
 };
 
-const game = new Phaser.Game(config);
+export class Game extends Phaser.Game {
+  constructor(config: Phaser.Types.Core.GameConfig) {
+    super(config);
+  }
+}
+
+window.addEventListener("load", () => {
+  var game = new Game(config);
+});
