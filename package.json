@@ -20,7 +20,9 @@
     },
     "homepage": "https://github.com/photonstorm/phaser3-typescript-project-template#readme",
     "dependencies": {
+        "acorn": "^7.1.1",
         "express": "^4.17.1",
+        "minimist": "^1.2.5",
         "phaser3-rex-plugins": "^1.1.8"
     },
     "devDependencies": {
