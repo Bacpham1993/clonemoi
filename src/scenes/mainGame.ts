@@ -3,15 +3,28 @@ export class mainGame extends Phaser.Scene {
     private mortiseDefault = new Phaser.Math.Vector2(0,0);
     private pulley;
     private doctor;
+    private lineOnPulley;
+    private hookLine;
     private rotation_dir = 0.01;
     private pod_status = 'rotate';
-    private initTime = 2;
-    private gameTime = 10;
-    private timeText;
+    private initTime = 10;
+    private gameTime = 30;
+    private timeText: Phaser.GameObjects.Text;
     private diamondPick;
     private textPick;
     private inputSome;
     private stageNum = 0;
+    private lineReplaceOnPulley;
+    private trueAnswer = 0;
+    private trueAnswerInLevel = 0;
+    private checkInputSome: boolean;
+    private gameTimeEvent;
+    private checkGift = {
+        timePlus: false,
+        restart: false
+    };
+    private lifeSpanGame: Phaser.GameObjects.Container;
+    private diamondGame: Array<Phaser.GameObjects.Container>;
     private questionSheet = [
         {
             ques: 'Theo quy định của WHO và luật người cao tuổi Việt Nam, công dân Việt Nam từ độ tuổi nào được định nghĩa là "Người cao tuổi"',
@@ -21,7 +34,7 @@ export class mainGame extends Phaser.Scene {
                 '65',
                 '70'
             ],
-            rig: [0,1,2,3]
+            rig: [1]
         },
         {
             ques: 'Tỉ lệ tăng huyết áp ở nhóm dân số > 60 tuổi ở Việt Nam',
@@ -93,41 +106,64 @@ export class mainGame extends Phaser.Scene {
         this.load.image('jw2', 'assets/jw-2.png');
         this.load.image('heart', 'assets/heart.png');
         this.load.image('star', 'assets/star.png');
+        this.load.image('timeplus', 'assets/timeplus.png');
+        this.load.image('restart', 'assets/restart.png');
         this.load.audio('explosion', ['assets/explosion.m4a']);
         this.load.audio('gamewon', ['assets/gamewon.m4a']);
         this.load.spritesheet('exp', 'assets/exp.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
     }
     create() {
-        this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);;
+        this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);
         this.doctor = this.add.sprite(this.cameras.main.width/2 + 50, this.cameras.main.height/2 - 100, 'doctor').setScale(0.5);
         this.pulley = this.physics.add.sprite(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80, 'pulley').setScale(0.5);
-        this.mortise = this.physics.add.sprite(this.cameras.main.width/2 - 30, this.cameras.main.height/2 + 10, 'mortise').setScale(0.5).setCollideWorldBounds(true);
-        this.mortiseDefault.x = this.mortise.x;
-        this.mortiseDefault.y = this.mortise.y;
-        this.createDiamond();
-        this.createLifeSpan();
-        // time
-        var timeOnGame = this.add.sprite(0, 0, 'time');
-        this.timeText = this.add.text(40, 0, this.formatTime(this.gameTime),
-        { fontFamily: "Arial", fontSize: '50px', color: "#ffffff", wordWrap: {
-            width: timeOnGame.width
-        } , align: "center"} );
-        this.timeText.setOrigin(0.5, 0.5);
-        var containerTime = this.add.container(this.cameras.main.width - 300, 50);
-        // end Time
-        containerTime.add(timeOnGame);
-        containerTime.add(this.timeText);
-        containerTime.setScale(0.5);
-        this.createQuestion(`CÂU HỎI ${this.stageNum + 1}`, this.questionSheet[this.stageNum].ques);
-        this.mortise.body.onWorldBounds = true;
-        this.physics.world.on('worldbounds', function(body) {
-            this.diamondPick = null;
-            this.pod_status = 'rewind';
-        }.bind(this));
-        this.inputSome = this.input.on('pointerdown', function(){
-            this.pod_status = 'shoot';
-        }.bind(this));
-        this.inputSome.enabled = false;
+        this.mortise = this.physics.add.sprite(0, 90, 'mortise').setScale(0.5);
+        this.lineOnPulley = this.add.line(0, 0, 0, 0, 0, 55, 0x222222, 1).setOrigin(0);
+        this.lineOnPulley.setName('lineOnPulley');
+        this.hookLine = this.add.container(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80); 
+        this.hookLine.add([this.mortise, this.lineOnPulley]);
+        this.physics.world.enable(this.hookLine);
+        this.hookLine.body.onWorldBounds = true;
+        this.hookLine.body.collideWorldBounds = true;
+        this.mortiseDefault.x = this.hookLine.x;
+        this.mortiseDefault.y = this.hookLine.y;
+        this.lineReplaceOnPulley = this.add.line(this.mortiseDefault.x, this.mortiseDefault.y, 0, 0, 0, 0, 0x222222, 1).setOrigin(0);
+         // time
+         var timeOnGame = this.add.sprite(0, 0, 'time');
+         this.timeText = this.add.text(40, 0, this.formatTime(this.gameTime),
+         { fontFamily: "Arial", fontSize: '50px', color: "#ffffff", wordWrap: {
+             width: timeOnGame.width
+         } , align: "center"} );
+         this.timeText.setOrigin(0.5, 0.5);
+         var containerTime = this.add.container(this.cameras.main.width - 300, 50);
+         // end Time
+         containerTime.add(timeOnGame);
+         containerTime.add(this.timeText);
+         containerTime.setScale(0.5);
+         this.lifeSpanGame = this.createLifeSpan();
+         this.mortise.body.onWorldBounds = true;
+         this.physics.world.on('worldbounds', function(body) {
+             this.diamondPick = null;
+             this.pod_status = 'rewind';
+         }.bind(this));
+         this.inputSome = this.input.on('pointerdown', function(){
+             if(this.checkInputSome) {
+                 this.pod_status = 'rotate';
+             } else {
+                 this.pod_status = 'shoot';
+             }
+         }.bind(this));
+        this.gameStart();
+    }
+
+    gameStart() {
+        if (this.diamondGame) {
+            for(var i = 0; i < this.diamondGame.length; i++) {
+                this.diamondGame[i].destroy();
+            };
+            this.initTime = 10;
+        } 
+        this.diamondGame = this.createDiamond();
+        this.createQuestion(`CÂU HỎI ${this.stageNum + 1}`, this.questionSheet[this.stageNum].ques);   
     }
 
     createBomb() {
@@ -144,17 +180,22 @@ export class mainGame extends Phaser.Scene {
             volume: 1
         });
         boom.anims.play('explode');
-        explosion.play()
+        explosion.play();
+        if(this.lifeSpanGame.length > 1) {
+            this.lifeSpanGame.removeAt(this.lifeSpanGame.length - 1, true);
+        } else {
+            this.lifeSpanGame.destroy();
+            this.createEndGame();
+        }
     }
 
-    createRight() {
+    createRight(trueLength: number) {
+        this.trueAnswer += 1;
+        this.trueAnswerInLevel += 1 ;
         var heart = this.add.sprite(this.doctor.x + 60, this.doctor.y, 'heart').setScale(0.5);
         this.tweens.add({
             targets: heart,
             alpha: { from: 0.5, to: 1 },
-            // alpha: { start: 0, to: 1 },
-            // alpha: 1,
-            // alpha: '+=1',
             ease: 'Bounce',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
             duration: 1000,
             repeat: -1,            // -1: infinity
@@ -164,16 +205,19 @@ export class mainGame extends Phaser.Scene {
             volume: 1
         });
         gamewon.on('complete', function() {
-            heart.destroy()
+            heart.destroy();
         }, this)
         gamewon.play();
+        if(this.trueAnswerInLevel === trueLength) {
+            this.createNextLevel();   
+        }
     }
 
     createLifeSpan(){
         var containerStar = this.add.container(50, 50);
         var star1 = this.add.sprite(0, 0, 'star');
-        var star2 = this.add.sprite(120, 0 , 'star');
-        var star3 = this.add.sprite(240, 0, 'star');
+        var star2 = this.add.sprite(140, 0 , 'star');
+        var star3 = this.add.sprite(280, 0, 'star');
         containerStar.add([star1, star2, star3]).setScale(0.5, 0.5);
         this.tweens.add({
             targets: containerStar,
@@ -192,10 +236,9 @@ export class mainGame extends Phaser.Scene {
         var dArray = ['jw1','jw2'];
         var boundNum = 15;
         var dAScale = [0.5, 1, 1.5];
+        var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i <= boundNum; i++) {
-            // collides[i] = this.physics.add.sprite(Math.floor((this.cameras.main.width-100) * Math.random()) + 100, this.cameras.main.height/2 + Math.floor(this.cameras.main.height/2 * Math.random()), dArray[ Math.floor(Math.random() * Math.floor(2))]).setOrigin(0);
             collides[i] = this.physics.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0);
-            var textAns;
             var scaleRandom = dAScale[Math.floor(Math.random() * Math.floor(3))];
             if(i < this.questionSheet[this.stageNum].ans.length) {
                 var style = { fontFamily: "Arial", fontSize: `${Math.floor(collides[i].width/3)}px`, color: "#ffffff", wordWrap: {
@@ -203,12 +246,10 @@ export class mainGame extends Phaser.Scene {
                 } , align: "center"};
                 textAns = this.add.text(collides[i].width/3, collides[i].height/4, this.questionSheet[this.stageNum].ans[i], style).setName('answ');
             }
+            
             let rndX = Phaser.Math.RND.integerInRange(150, this.cameras.main.width - 150);
             let rndY = Phaser.Math.RND.integerInRange(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150)
-            // containerCollides[i] = this.add.container(this.checkPointInCircle(new Phaser.Math.Vector2(rndX, rndY), 100, collides).x, this.checkPointInCircle(new Phaser.Math.Vector2(rndX, rndY), 100, collides).y)
-            containerCollides[i] = this.add.container(rndX, rndY);
-            containerCollides[i].add(collides[i]);
-            containerCollides[i].add(textAns);
+            containerCollides[i] = this.add.container(rndX, rndY, [collides[i], textAns ? textAns : null]);
             containerCollides[i].setScale(scaleRandom);
             this.physics.world.enable(containerCollides[i]);
             this.physics.add.collider(this.mortise, containerCollides[i], function(ob1, ob2){
@@ -217,6 +258,7 @@ export class mainGame extends Phaser.Scene {
                 this.pod_status = 'rewind';
             }.bind(this))
         };
+        return containerCollides;
     }
 
     createTimeGame() {
@@ -228,13 +270,16 @@ export class mainGame extends Phaser.Scene {
                 this.timeText.setText(this.formatTime(this.gameTime));
                 if(this.gameTime === 0) {
                     timeEventGame.destroy();
+                    this.createEndGame();
                 }
             },
             callbackScope: this
-        })
+        });
+        return timeEventGame;
     }
 
     createQuestion(quesNum: string, quesDes: string) {
+        this.checkInputSome = true;
         var timeEvent10 = this.time.addEvent({
             delay: 1000,
             callback: function() {
@@ -243,7 +288,7 @@ export class mainGame extends Phaser.Scene {
                 if (this.initTime === 0) {
                     timeEvent10.destroy();
                     container.destroy();
-                    this.inputSome.enabled = true;
+                    this.checkInputSome = false;
                     this.createTimeGame();
                 }
             },
@@ -259,7 +304,7 @@ export class mainGame extends Phaser.Scene {
         }  , align: "center"};
         var textQ = this.add.text(0, -lcloud.height/2 + 100 , `${quesNum}`, style);
         var textQs = this.add.text(0, -lcloud.height/8, `${quesDes}`, styleQ);
-        var time10 = this.add.text(0, lcloud.height/2 - 100, this.formatTime(this.initTime), { fontFamily: "Arial", fontSize: '90px', color: "#fff", wordWrap: {
+        var time10 = this.add.text(30, lcloud.height/2 - 100, this.formatTime(this.initTime), { fontFamily: "Arial", fontSize: '90px', color: "#fff", wordWrap: {
             width: lcloud.width
         }  , align: "center"}); 
         textQ.setOrigin(0.5, 0.5);
@@ -285,37 +330,50 @@ export class mainGame extends Phaser.Scene {
     }
 
     update(time, delta) {
+        var hihi = Phaser.Math.Angle.BetweenPoints(new Phaser.Math.Vector2(this.hookLine.x, this.hookLine.y), new Phaser.Math.Vector2(this.mortiseDefault.x, this.mortiseDefault.y));
+        var haha = Phaser.Math.Distance.BetweenPoints(new Phaser.Math.Vector2(this.hookLine.x, this.hookLine.y), new Phaser.Math.Vector2(this.mortiseDefault.x, this.mortiseDefault.y));
         switch(this.pod_status) {
             case 'rotate': 
-                this.mortise.rotation += this.rotation_dir*delta/3;
-                if(this.mortise.rotation >= 4*Math.PI/9 || this.mortise.rotation <= -4*Math.PI/9) {
+                this.hookLine.rotation += this.rotation_dir*delta/3;
+                if(this.hookLine.rotation >= Phaser.Math.DegToRad(70) || this.hookLine.rotation <= -Phaser.Math.DegToRad(70)) {
                     this.rotation_dir *= -1;
                 };
                 break;
             case 'shoot': 
-                this.mortise.x += 10*Math.cos(Math.PI/2 + this.mortise.rotation);
-                this.mortise.y += 10*Math.sin(Math.PI/2 + this.mortise.rotation);
+                this.hookLine.x += 10*Math.cos(Phaser.Math.DegToRad(90) + this.hookLine.rotation);
+                this.hookLine.y += 10*Math.sin(Phaser.Math.DegToRad(90) + this.hookLine.rotation);
+                this.lineReplaceOnPulley.setTo(0, 0, -haha * Math.cos(hihi), -haha * Math.sin(hihi))
                 break;
             case 'rewind':
-                this.mortise.x -= 10*Math.cos(Math.PI/2 + this.mortise.rotation);
-                this.mortise.y -= 10*Math.sin(Math.PI/2 + this.mortise.rotation);
-                if(this.diamondPick) {
-                    this.diamondPick.x -= 10*Math.cos(Math.PI/2 + this.mortise.rotation);
-                    this.diamondPick.y -= 10*Math.sin(Math.PI/2 + this.mortise.rotation);
+                let slowdown = 0;
+                if (this.diamondPick) {
+                    if ( this.diamondPick.scale === 1.5) {
+                        slowdown = 6;
+                    } else if (this.diamondPick.scale === 1) {
+                        slowdown = 3;
+                    } else {
+                        slowdown = 0;
+                    }
                 }
-                if(this.mortise.y <= this.mortiseDefault.y) {
-                    this.mortise.x = this.mortiseDefault.x;
-                    this.mortise.y = this.mortiseDefault.y;
-                    this.mortise.rotation = 0;
+                this.hookLine.x -= (10-slowdown)*Math.cos(Phaser.Math.DegToRad(90) + this.hookLine.rotation);
+                this.hookLine.y -= (10-slowdown)*Math.sin(Phaser.Math.DegToRad(90) + this.hookLine.rotation);
+                this.lineReplaceOnPulley.setTo(0, 0, -haha * Math.cos(hihi), -haha * Math.sin(hihi));
+                if(this.diamondPick) {
+                    this.diamondPick.x -= (10-slowdown)*Math.cos(Phaser.Math.DegToRad(90) + this.hookLine.rotation);
+                    this.diamondPick.y -= (10-slowdown)*Math.sin(Phaser.Math.DegToRad(90) + this.hookLine.rotation);
+                }
+                if(this.hookLine.y <= this.mortiseDefault.y) {
+                    this.hookLine.x = this.mortiseDefault.x;
+                    this.hookLine.y = this.mortiseDefault.y;
+                    this.hookLine.rotation = 0;
                     if(this.diamondPick) {
                         this.diamondPick.destroy();
-                        // console.log(this.questionSheet[this.stageNum].rig, this.diamondPick.last.text)
                         if (typeof(this.diamondPick.getByName('answ')) !== null) {
                             const quesOK = this.questionSheet[this.stageNum];
                             const ansOK = this.textPick;
-                            console.log(quesOK, ansOK);
+                            // console.log(quesOK, ansOK);
                             if(quesOK.rig.includes(quesOK.ans.indexOf(ansOK))) {
-                                this.createRight();
+                                this.createRight(quesOK.rig.length);
                             } else {
                                 this.createBomb();
                             }
@@ -324,13 +382,98 @@ export class mainGame extends Phaser.Scene {
                     this.pod_status = 'rotate';
                 }
                 break;
+            default: break;
         }        
     }
 
     createEndGame() {
-        this.inputSome.enabled = false;
-        this.pod_status = '';
-        this.createQuestion('THẤT BẠI', 'VUI LÒNG CHƠI LẠI');
+        this.time.removeAllEvents();
+        this.timeText.setText(this.formatTime(30));
+        this.checkInputSome = true;
+        this.createNote('SỐ ĐÁP ÁN ĐÚNG', 'CHƠI LẠI', true);
+    }
+
+    createNextLevel() {
+        this.time.removeAllEvents();
+        this.checkInputSome = true;
+        this.trueAnswerInLevel = 0;
+        this.createNote('CHỌN VẬT PHẨM', 'TIẾP TỤC', false);
+    }
+
+    createNote(quesNum: string, bottomDes: string, done: boolean) {
+        var lcloud = this.add.sprite(0, 0, 'lcloud');
+        var style = { fontFamily: "Arial", fontSize: '64px', color: "#0000ff", wordWrap: {
+            width: lcloud.width
+        } , align: "center"};
+        var textQ = this.add.text(0, -lcloud.height/3, `${quesNum}`, style);
+        textQ.setOrigin(0.5, 0.5);
+        if(!done) {
+            var containerTexture = this.createTexture(lcloud, -lcloud.width/3.2, -lcloud.height/8, done);
+        } else {
+            var containerTexture = this.createTexture(lcloud, 0, -lcloud.height/8, done);
+        } 
+        var bottomText = this.add.text(30, lcloud.height/2 - 100, `${bottomDes}`, { fontFamily: "Arial", fontSize: '90px', color: "#fff", wordWrap: {
+            width: lcloud.width
+        }  , align: "center"});
+        bottomText.setOrigin(0.5,0.5);
+        bottomText.setInteractive(new Phaser.Geom.Rectangle(0, 0, bottomText.width, bottomText.height), Phaser.Geom.Rectangle.Contains);
+        bottomText.on('pointerdown', function(pointer){
+            container.destroy();
+            if(!done) {
+                this.stageNum +=1;
+                this.gameStart();
+            } else {
+                this.stageNum = 0;
+                this.gameTime = 30;
+                this.lifeSpanGame = this.createLifeSpan();
+                this.gameStart();
+            }
+        }.bind(this));
+        var container = this.add.container(this.cameras.main.width/2, this.cameras.main.height/2);
+        container.add(lcloud);
+        container.add(textQ);
+        container.add(containerTexture);
+        container.add(bottomText);
+        container.setScale(0.5);
+        return container;
+    }
+
+    createTexture(lcloud: Phaser.GameObjects.Sprite, x: number, y: number, done: boolean) {
+        var container1: Phaser.GameObjects.Container, container2: Phaser.GameObjects.Container, containerTotal: Phaser.GameObjects.Container;
+        var styleQ = { fontFamily: "Arial", fontSize: '64px', color: "#222", wordWrap: {
+            width: lcloud.width
+        }  , align: "center"};
+        if (!done) {
+            var restartButton = this.add.sprite(0, 0, 'restart').setScale(2.5).setInteractive();
+            var timePlusButton = this.add.sprite(0, 0, 'timeplus').setScale(2.5).setInteractive();
+            var textTime = this.add.text(0, timePlusButton.height + 50, '+10 giây', styleQ).setOrigin(0.5, 0.5);
+            var textRestart = this.add.text(0, restartButton.height + 60, 'Chơi lại màn vừa rồi', styleQ).setOrigin(0.5, 0.5);
+            container1 = this.add.container(0, 0).add([timePlusButton, textTime]);
+            container1.setInteractive(new Phaser.Geom.Rectangle(0, 0, container1.width, container1.height), Phaser.Geom.Rectangle.Contains);
+            timePlusButton.on('pointerdown', function(pointer){
+                this.checkGift.timePlus = true;
+                this.gameTime += 10;
+                this.timeText.setText(this.formatTime(this.gameTime));
+                container1.destroy();
+            }.bind(this));
+            container2 = this.add.container(lcloud.width/1.9, 0).add([restartButton, textRestart]);
+            container2.setInteractive(new Phaser.Geom.Rectangle(0, 0, container2.width, container2.height), Phaser.Geom.Rectangle.Contains);
+            restartButton.on('pointerdown', function(pointer){
+                this.checkGift.restart = true;
+                this.gameStart();
+                container2.destroy();
+            }.bind(this));
+            if (this.checkGift.timePlus === true) container1.destroy();
+            if (this.checkGift.restart === true) container2.destroy();
+        } else {
+            var emoji = this.add.text(0, 0, `${this.trueAnswer < 6 ? '🙁' : '💖'} | ${this.trueAnswer} / 11`, styleQ).setOrigin(0.5, 0.5);
+            container1 = this.add.container(0, 0, emoji);
+            var tempText = this.trueAnswer < 6 ? 'Bác sĩ hãy giúp bệnh nhân kiểm soát mức huyết áp của mình tốt hơn nhé' : 'chúc mừng bác sĩ đã giúp bệnh nhân kiểm soát huyết áp tốt';
+            var textWinLose = this.add.text(0, 0, `${tempText}`, styleQ).setOrigin(0.5, 0.5);
+            container2 = this.add.container(0, 200, textWinLose);
+        }
+        containerTotal = this.add.container(x,y).add([container1, container2]);
+        return containerTotal;
     }
 
     checkPointInCircle(I: Phaser.Math.Vector2, R: number, A: Array<Phaser.Math.Vector2>) {
