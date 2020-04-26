@@ -9,7 +9,7 @@ export class mainGame extends Phaser.Scene {
     private hookLine;
     private rotation_dir = 0.01;
     private pod_status = 'rotate';
-    private initTime = 1;
+    private initTime = 10;
     private gameTime = 30;
     private timeText: Phaser.GameObjects.Text;
     private diamondPick;
@@ -229,9 +229,9 @@ export class mainGame extends Phaser.Scene {
     createLifeSpan(){
         var containerStar = this.add.container(50, 50);
         var star1 = this.add.sprite(0, 0, 'star');
-        // var star2 = this.add.sprite(140, 0 , 'star');
-        // var star3 = this.add.sprite(280, 0, 'star');
-        containerStar.add([star1, ]).setScale(0.5, 0.5);
+        var star2 = this.add.sprite(140, 0 , 'star');
+        var star3 = this.add.sprite(280, 0, 'star');
+        containerStar.add([star1, star2, star3]).setScale(0.5, 0.5);
         this.tweens.add({
             targets: containerStar,
             alpha: { from: 0.5, to: 1 },
