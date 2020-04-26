@@ -1,5 +1,5 @@
 import "phaser";
-// import RotateToPlugin from 'phaser3-rex-plugins/plugins/rotateto-plugin.js';
+// import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin';
 import { bootGame } from "./scenes/bootGame";
 import { guideGame } from "./scenes/guideGame";
 import { mainGame } from "./scenes/mainGame";
@@ -13,7 +13,7 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
-  // resolution: window.devicePixelRatio,
+  // resolution: window.devicePixelRatio || 1,
   type: Phaser.AUTO,
   scene: [bootGame, guideGame, mainGame],
   physics: {
@@ -21,7 +21,7 @@ const config: Phaser.Types.Core.GameConfig = {
     arcade: {
         fps: 60,
         gravity: { y: 0 },
-        // debug: true
+        debug: true
     }
   },
   input: {
@@ -32,14 +32,19 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   // plugins: {
   //   global: [{
-  //       key: 'rexRotateTo',
-  //       plugin: RotateToPlugin,
-  //       start: true,
+  //       key: 'rexBBCodeTextPlugin',
+  //       plugin: BBCodeTextPlugin,
+  //       start: true
   //   },
+  //   // ...
   //   ]
   // },
   backgroundColor: "#000000",
-  render: { pixelArt: true, antialias: false }
+  render: { 
+    // pixelArt: true, 
+    antialias: true,
+    roundPixels: true
+   }
 };
 
 export class Game extends Phaser.Game {

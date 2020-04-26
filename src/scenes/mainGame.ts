@@ -1,3 +1,5 @@
+import { Sleeping } from "matter";
+
 export class mainGame extends Phaser.Scene {
     private mortise;
     private mortiseDefault = new Phaser.Math.Vector2(0,0);
@@ -7,7 +9,7 @@ export class mainGame extends Phaser.Scene {
     private hookLine;
     private rotation_dir = 0.01;
     private pod_status = 'rotate';
-    private initTime = 10;
+    private initTime = 1;
     private gameTime = 30;
     private timeText: Phaser.GameObjects.Text;
     private diamondPick;
@@ -19,6 +21,7 @@ export class mainGame extends Phaser.Scene {
     private trueAnswerInLevel = 0;
     private checkInputSome: boolean;
     private gameTimeEvent;
+    private cloudx;
     private checkGift = {
         timePlus: false,
         restart: false
@@ -100,10 +103,16 @@ export class mainGame extends Phaser.Scene {
         this.load.image('pulley', 'assets/rongroc.png');
         this.load.image('mortise', 'assets/ngoam.png');
         this.load.image('lcloud', 'assets/lcloud.png');
+        this.load.image('lcloud-q', 'assets/lcloud-q.png');
+        this.load.image('lcloud-end', 'assets/lcloud-end.png');
         this.load.image('cloud', 'assets/cloud.png');
         this.load.image('time', 'assets/time.png');
-        this.load.image('jw1', 'assets/jw-1.png');
-        this.load.image('jw2', 'assets/jw-2.png');
+        this.load.image('jw11', 'assets/jw-11.png');
+        this.load.image('jw21', 'assets/jw-21.png');
+        this.load.image('jw12', 'assets/jw-12.png');
+        this.load.image('jw22', 'assets/jw-22.png');
+        this.load.image('jw13', 'assets/jw-13.png');
+        this.load.image('jw23', 'assets/jw-23.png');
         this.load.image('heart', 'assets/heart.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('timeplus', 'assets/timeplus.png');
@@ -111,6 +120,7 @@ export class mainGame extends Phaser.Scene {
         this.load.audio('explosion', ['assets/explosion.m4a']);
         this.load.audio('gamewon', ['assets/gamewon.m4a']);
         this.load.spritesheet('exp', 'assets/exp.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
+        this.load.plugin('rexbbcodetextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbbcodetextplugin.min.js', true);
     }
     create() {
         this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);
@@ -130,7 +140,7 @@ export class mainGame extends Phaser.Scene {
          // time
          var timeOnGame = this.add.sprite(0, 0, 'time');
          this.timeText = this.add.text(40, 0, this.formatTime(this.gameTime),
-         { fontFamily: "Arial", fontSize: '50px', color: "#ffffff", wordWrap: {
+         { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '50px', color: "#ffffff", wordWrap: {
              width: timeOnGame.width
          } , align: "center"} );
          this.timeText.setOrigin(0.5, 0.5);
@@ -166,21 +176,24 @@ export class mainGame extends Phaser.Scene {
         this.createQuestion(`CÂU HỎI ${this.stageNum + 1}`, this.questionSheet[this.stageNum].ques);   
     }
 
-    createBomb() {
-        var config = {
-            key: 'explode',
-            frames: this.anims.generateFrameNumbers('exp', { start: 0, end: 23, first: 23 }),
-            frameRate: 20,
-        };
-    
-        this.anims.create(config);
-    
-        var boom = this.add.sprite(this.mortiseDefault.x, this.mortiseDefault.y, 'exp').setScale(2);
-        var explosion = this.sound.add('explosion', {
-            volume: 1
-        });
-        boom.anims.play('explode');
-        explosion.play();
+    createBomb(ansOK: any) {
+        if(ansOK !== null){
+            var config = {
+                key: 'explode',
+                frames: this.anims.generateFrameNumbers('exp', { start: 0, end: 23, first: 23 }),
+                frameRate: 20,
+            };
+        
+            this.anims.create(config);
+        
+            var boom = this.add.sprite(this.mortiseDefault.x, this.mortiseDefault.y, 'exp').setScale(2);
+            var explosion = this.sound.add('explosion', {
+                volume: 1
+            });
+        
+            boom.anims.play('explode');
+            explosion.play();
+        }
         if(this.lifeSpanGame.length > 1) {
             this.lifeSpanGame.removeAt(this.lifeSpanGame.length - 1, true);
         } else {
@@ -216,9 +229,9 @@ export class mainGame extends Phaser.Scene {
     createLifeSpan(){
         var containerStar = this.add.container(50, 50);
         var star1 = this.add.sprite(0, 0, 'star');
-        var star2 = this.add.sprite(140, 0 , 'star');
-        var star3 = this.add.sprite(280, 0, 'star');
-        containerStar.add([star1, star2, star3]).setScale(0.5, 0.5);
+        // var star2 = this.add.sprite(140, 0 , 'star');
+        // var star3 = this.add.sprite(280, 0, 'star');
+        containerStar.add([star1, ]).setScale(0.5, 0.5);
         this.tweens.add({
             targets: containerStar,
             alpha: { from: 0.5, to: 1 },
@@ -233,26 +246,26 @@ export class mainGame extends Phaser.Scene {
     createDiamond(){
         var collides = new Array();
         var containerCollides = new Array();
-        var dArray = ['jw1','jw2'];
-        var boundNum = 15;
-        var dAScale = [0.5, 1, 1.5];
+        var dArray = ['jw11','jw21','jw12','jw22','jw13','jw23'];
+        var boundNum = 12;
         var textAns: Phaser.GameObjects.Text;
-        for(var i = 0; i <= boundNum; i++) {
-            collides[i] = this.physics.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0);
-            var scaleRandom = dAScale[Math.floor(Math.random() * Math.floor(3))];
+        for(var i = 0; i < boundNum; i++) {
+            collides[i] = this.physics.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(6))]).setOrigin(0);
             if(i < this.questionSheet[this.stageNum].ans.length) {
-                var style = { fontFamily: "Arial", fontSize: `${Math.floor(collides[i].width/3)}px`, color: "#ffffff", wordWrap: {
+                var style = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: `${Math.floor(collides[i].width/3)}px`, color: "#ffffff", wordWrap: {
                     width: collides[i].width
                 } , align: "center"};
                 textAns = this.add.text(collides[i].width/3, collides[i].height/4, this.questionSheet[this.stageNum].ans[i], style).setName('answ');
             }
-            
-            let rndX = Phaser.Math.RND.integerInRange(150, this.cameras.main.width - 150);
-            let rndY = Phaser.Math.RND.integerInRange(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150)
-            containerCollides[i] = this.add.container(rndX, rndY, [collides[i], textAns ? textAns : null]);
-            containerCollides[i].setScale(scaleRandom);
+            let rndX = this.cameras.main.width/12*i;
+            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150)
+            containerCollides[i] = this.add.container(rndX, rndY);
+            containerCollides[i].add(collides[i]);
+            if(i < this.questionSheet[this.stageNum].ans.length) {
+                containerCollides[i].add(textAns);
+            }
             this.physics.world.enable(containerCollides[i]);
-            this.physics.add.collider(this.mortise, containerCollides[i], function(ob1, ob2){
+            this.physics.add.overlap(this.mortise, containerCollides[i], function(ob1, ob2){
                 this.diamondPick = ob2;
                 this.textPick = this.diamondPick.getByName('answ') ? this.diamondPick.getByName('answ').text : null; 
                 this.pod_status = 'rewind';
@@ -288,6 +301,20 @@ export class mainGame extends Phaser.Scene {
                 if (this.initTime === 0) {
                     timeEvent10.destroy();
                     container.destroy();
+                    var cloudm = this.add.sprite(0, 0, 'cloud');
+                    var quesx = this.add.rexBBCodeText(0, 0, `${quesDes}`,{
+                        fontFamily: "'Roboto Condensed', sans-serif",
+                        fontSize: '28px',
+                        color: '#222',
+                        halign: 'center',
+                        valign: 'center',
+                        origin: { x: 0.5, y: 0.5 },
+                        wrap: {
+                            mode: 'word',
+                            width: lcloud.width - 100
+                        }
+                    }).setOrigin(0.5, 0.5);
+                    this.cloudx = this.add.container(this.cameras.main.width/2, 100, [cloudm, quesx])
                     this.checkInputSome = false;
                     this.createTimeGame();
                 }
@@ -296,22 +323,24 @@ export class mainGame extends Phaser.Scene {
             loop: true
         });
         var lcloud = this.add.sprite(0, 0, 'lcloud');
-        var style = { fontFamily: "Arial", fontSize: '64px', color: "#0000ff", wordWrap: {
-            width: lcloud.width
+        var lcloudQ = this.add.sprite(lcloud.width*3/4, lcloud.height*0.5, 'lcloud-q').setScale(0.7);
+        var style = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#0000ff", wordWrap: {
+            width: lcloud.width - 100
         } , align: "center"};
-        var styleQ = { fontFamily: "Arial", fontSize: '64px', color: "#222", wordWrap: {
-            width: lcloud.width
+        var styleQ = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#222", wordWrap: {
+            width: lcloud.width - 100
         }  , align: "center"};
         var textQ = this.add.text(0, -lcloud.height/2 + 100 , `${quesNum}`, style);
         var textQs = this.add.text(0, -lcloud.height/8, `${quesDes}`, styleQ);
-        var time10 = this.add.text(30, lcloud.height/2 - 100, this.formatTime(this.initTime), { fontFamily: "Arial", fontSize: '90px', color: "#fff", wordWrap: {
-            width: lcloud.width
+        var time10 = this.add.text(0, lcloud.height/2 - 120, this.formatTime(this.initTime), { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '90px', color: "#fff", wordWrap: {
+            width: lcloud.width - 100
         }  , align: "center"}); 
         textQ.setOrigin(0.5, 0.5);
         textQs.setOrigin(0.5, 0.5);
         time10.setOrigin(0.5,0.5);
         var container = this.add.container(this.cameras.main.width/2, this.cameras.main.height/2);
         container.add(lcloud);
+        container.add(lcloudQ);
         container.add(textQ);
         container.add(textQs);
         container.add(time10);
@@ -371,11 +400,10 @@ export class mainGame extends Phaser.Scene {
                         if (typeof(this.diamondPick.getByName('answ')) !== null) {
                             const quesOK = this.questionSheet[this.stageNum];
                             const ansOK = this.textPick;
-                            // console.log(quesOK, ansOK);
                             if(quesOK.rig.includes(quesOK.ans.indexOf(ansOK))) {
                                 this.createRight(quesOK.rig.length);
                             } else {
-                                this.createBomb();
+                                this.createBomb(ansOK);
                             }
                         }
                     }
@@ -388,32 +416,55 @@ export class mainGame extends Phaser.Scene {
 
     createEndGame() {
         this.time.removeAllEvents();
+        this.cloudx.destroy();
         this.timeText.setText(this.formatTime(30));
         this.checkInputSome = true;
-        this.createNote('SỐ ĐÁP ÁN ĐÚNG', 'CHƠI LẠI', true);
+        this.trueAnswerInLevel = 0;
+        this.createNote('[b]SỐ ĐÁP ÁN ĐÚNG[/b]', 'CHƠI LẠI', true);
     }
 
     createNextLevel() {
         this.time.removeAllEvents();
+        this.cloudx.destroy();
         this.checkInputSome = true;
         this.trueAnswerInLevel = 0;
-        this.createNote('CHỌN VẬT PHẨM', 'TIẾP TỤC', false);
+        this.createNote('[b]CHỌN VẬT PHẨM[/b]', 'TIẾP TỤC', false);
     }
 
     createNote(quesNum: string, bottomDes: string, done: boolean) {
-        var lcloud = this.add.sprite(0, 0, 'lcloud');
-        var style = { fontFamily: "Arial", fontSize: '64px', color: "#0000ff", wordWrap: {
-            width: lcloud.width
+        var lcloud;
+        var lcloudQ;
+        if (!done) {
+            lcloud = this.add.sprite(0, 0, 'lcloud');
+            lcloudQ = this.add.sprite(lcloud.width*3/4, lcloud.height*0.5, 'lcloud-q').setScale(0.7);
+        } else {
+            lcloud = this.add.sprite(0,0, 'lcloud-end');
+        }
+        var style = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#0000ff", wordWrap: {
+            width: lcloud.width - 100
         } , align: "center"};
-        var textQ = this.add.text(0, -lcloud.height/3, `${quesNum}`, style);
+        // var textQ = this.add.text(0, done ? 0 : -lcloud.height/3, `${quesNum}`, style);
+        // @ts-ignore
+        var textQ = this.add.rexBBCodeText(0, done ? -lcloud.height/7 : -lcloud.height/3, `${quesNum}`,{
+            fontFamily: "'Roboto Condensed', sans-serif",
+            fontSize: '64px',
+            color: '#0000ff',
+            halign: 'center',
+            valign: 'top',
+            origin: { x: 0.5, y: 0.5 },
+            wrap: {
+                mode: 'word',
+                width: lcloud.width - 100
+            }
+        }).setOrigin(0.5, 0.5);
         textQ.setOrigin(0.5, 0.5);
         if(!done) {
             var containerTexture = this.createTexture(lcloud, -lcloud.width/3.2, -lcloud.height/8, done);
         } else {
             var containerTexture = this.createTexture(lcloud, 0, -lcloud.height/8, done);
         } 
-        var bottomText = this.add.text(30, lcloud.height/2 - 100, `${bottomDes}`, { fontFamily: "Arial", fontSize: '90px', color: "#fff", wordWrap: {
-            width: lcloud.width
+        var bottomText = this.add.text(0, lcloud.height/2 - 120, `${bottomDes}`, { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '90px', color: "#fff", wordWrap: {
+            width: lcloud.width - 100
         }  , align: "center"});
         bottomText.setOrigin(0.5,0.5);
         bottomText.setInteractive(new Phaser.Geom.Rectangle(0, 0, bottomText.width, bottomText.height), Phaser.Geom.Rectangle.Contains);
@@ -431,6 +482,9 @@ export class mainGame extends Phaser.Scene {
         }.bind(this));
         var container = this.add.container(this.cameras.main.width/2, this.cameras.main.height/2);
         container.add(lcloud);
+        if (!done) {
+            container.add(lcloudQ);
+        }
         container.add(textQ);
         container.add(containerTexture);
         container.add(bottomText);
@@ -440,14 +494,14 @@ export class mainGame extends Phaser.Scene {
 
     createTexture(lcloud: Phaser.GameObjects.Sprite, x: number, y: number, done: boolean) {
         var container1: Phaser.GameObjects.Container, container2: Phaser.GameObjects.Container, containerTotal: Phaser.GameObjects.Container;
-        var styleQ = { fontFamily: "Arial", fontSize: '64px', color: "#222", wordWrap: {
-            width: lcloud.width
+        var styleQ = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#222", wordWrap: {
+            width: lcloud.width - 100
         }  , align: "center"};
         if (!done) {
             var restartButton = this.add.sprite(0, 0, 'restart').setScale(2.5).setInteractive();
             var timePlusButton = this.add.sprite(0, 0, 'timeplus').setScale(2.5).setInteractive();
-            var textTime = this.add.text(0, timePlusButton.height + 50, '+10 giây', styleQ).setOrigin(0.5, 0.5);
-            var textRestart = this.add.text(0, restartButton.height + 60, 'Chơi lại màn vừa rồi', styleQ).setOrigin(0.5, 0.5);
+            var textTime = this.add.text(0, timePlusButton.height + 80, '+10 giây', styleQ).setOrigin(0.5, 0.5);
+            var textRestart = this.add.text(0, restartButton.height + 80, 'Chơi lại màn \nvừa rồi', styleQ).setOrigin(0.5, 0.5);
             container1 = this.add.container(0, 0).add([timePlusButton, textTime]);
             container1.setInteractive(new Phaser.Geom.Rectangle(0, 0, container1.width, container1.height), Phaser.Geom.Rectangle.Contains);
             timePlusButton.on('pointerdown', function(pointer){
@@ -456,7 +510,7 @@ export class mainGame extends Phaser.Scene {
                 this.timeText.setText(this.formatTime(this.gameTime));
                 container1.destroy();
             }.bind(this));
-            container2 = this.add.container(lcloud.width/1.9, 0).add([restartButton, textRestart]);
+            container2 = this.add.container(lcloud.width/1.7, 0).add([restartButton, textRestart]);
             container2.setInteractive(new Phaser.Geom.Rectangle(0, 0, container2.width, container2.height), Phaser.Geom.Rectangle.Contains);
             restartButton.on('pointerdown', function(pointer){
                 this.checkGift.restart = true;
@@ -466,30 +520,61 @@ export class mainGame extends Phaser.Scene {
             if (this.checkGift.timePlus === true) container1.destroy();
             if (this.checkGift.restart === true) container2.destroy();
         } else {
-            var emoji = this.add.text(0, 0, `${this.trueAnswer < 6 ? '🙁' : '💖'} | ${this.trueAnswer} / 11`, styleQ).setOrigin(0.5, 0.5);
+            var emoji = this.add.text(-10, 130, `${this.trueAnswer < 6 ? '🙁 ' : '💖 '}  ${this.trueAnswer} / 11`, styleQ).setOrigin(0.5, 0.5);
             container1 = this.add.container(0, 0, emoji);
             var tempText = this.trueAnswer < 6 ? 'Bác sĩ hãy giúp bệnh nhân kiểm soát mức huyết áp của mình tốt hơn nhé' : 'chúc mừng bác sĩ đã giúp bệnh nhân kiểm soát huyết áp tốt';
             var textWinLose = this.add.text(0, 0, `${tempText}`, styleQ).setOrigin(0.5, 0.5);
-            container2 = this.add.container(0, 200, textWinLose);
+            container2 = this.add.container(0, 300, textWinLose);
         }
         containerTotal = this.add.container(x,y).add([container1, container2]);
         return containerTotal;
     }
 
-    checkPointInCircle(I: Phaser.Math.Vector2, R: number, A: Array<Phaser.Math.Vector2>) {
-        let num: Phaser.Math.Vector2;
-        if(A.length > 0) {
-            for(let i = 0; i <= A.length; i++) {
-                let a = ((A[i].x - I.x)^2 + (A[i].y - I.y)^2);
-                let b = R^2;
-                if(a <= b) {
-                    num = new Phaser.Math.Vector2(Phaser.Math.Between(150, this.cameras.main.width - 150), Phaser.Math.RND.integerInRange(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150));
-                    break;
-                } 
-            }
-        }
-        return num;
-    }
+    // checkPointInCircle(I: Phaser.Math.Vector2, R: number, A: Phaser.Math.Vector2) {
+    //     let ok: boolean;   
+    //     let a = Math.sqrt((A.x - I.x)^2 + (A.y - I.y)^2);
+    //     let b = R;
+    //     if(a <= b) {
+    //         ok = true;
+    //         // console.log(a, b, a <= b);
+    //     } else {
+    //         ok = false;
+    //         // console.log('check false',a, b, a <= b);
+    //     };
+    //     return ok;         
+    // }
+
+    // checkOK(R: number) {
+    //     let i = 0;
+    //     let A = new Array();
+    //     A.push(new Phaser.Math.Vector2(Phaser.Math.Between(150, this.cameras.main.width - 150), Phaser.Math.RND.integerInRange(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150)));
+    //     while(i < 14) {
+    //         let check = false;
+    //         let F = new Phaser.Math.Vector2(Phaser.Math.RND.integerInRange(150, this.cameras.main.width - 150), Phaser.Math.RND.integerInRange(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150));
+    //         for(let k = 0; k < A.length; k++) {
+    //             if (this.checkPointInCircle(A[k], R, F)) {
+    //                 check = true;
+    //                 break;                    
+    //             };
+    //                      };
+    //         if(!check) {
+    //             i += 1;
+    //             A.push(F);
+    //         }
+    //     };
+    //     console.log(A);
+    //     return A;
+        
+    // }
+    // checkOverlapMany(sprite, list) {
+    
+    //     for (var i = 0; i < list.length; i++)
+    //     {
+    //         if (this.physics.overlap(sprite, list )) return true;
+    //     }
+        
+    //     return false;
+    // }
     render() {
         
     }
