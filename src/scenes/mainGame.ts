@@ -21,6 +21,7 @@ export class mainGame extends Phaser.Scene {
     private trueAnswerInLevel = 0;
     private checkInputSome: boolean;
     private gameTimeEvent;
+    private checkGiftNote;
     private cloudx;
     private checkGift = {
         timePlus: false,
@@ -144,7 +145,7 @@ export class mainGame extends Phaser.Scene {
              width: timeOnGame.width
          } , align: "center"} );
          this.timeText.setOrigin(0.5, 0.5);
-         var containerTime = this.add.container(this.cameras.main.width - 300, 50);
+         var containerTime = this.add.container(this.cameras.main.width - 150, 50);
          // end Time
          containerTime.add(timeOnGame);
          containerTime.add(this.timeText);
@@ -193,13 +194,14 @@ export class mainGame extends Phaser.Scene {
         
             boom.anims.play('explode');
             explosion.play();
+            if(this.lifeSpanGame.length > 1) {
+                this.lifeSpanGame.removeAt(this.lifeSpanGame.length - 1, true);
+            } else {
+                this.lifeSpanGame.destroy();
+                this.createEndGame();
+            }
         }
-        if(this.lifeSpanGame.length > 1) {
-            this.lifeSpanGame.removeAt(this.lifeSpanGame.length - 1, true);
-        } else {
-            this.lifeSpanGame.destroy();
-            this.createEndGame();
-        }
+        
     }
 
     createRight(trueLength: number) {
@@ -246,31 +248,50 @@ export class mainGame extends Phaser.Scene {
     createDiamond(){
         var collides = new Array();
         var containerCollides = new Array();
-        var dArray = ['jw11','jw21','jw12','jw22','jw13','jw23'];
+        var dArray = ['jw11','jw21'];
         var boundNum = 12;
+        var RNDScale = [0.5, 1, 1.5];
         var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i < boundNum; i++) {
-            collides[i] = this.physics.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(6))]).setOrigin(0);
-            if(i < this.questionSheet[this.stageNum].ans.length) {
-                var style = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: `${Math.floor(collides[i].width/3)}px`, color: "#ffffff", wordWrap: {
-                    width: collides[i].width
-                } , align: "center"};
-                textAns = this.add.text(collides[i].width/3, collides[i].height/4, this.questionSheet[this.stageNum].ans[i], style).setName('answ');
-            }
+            collides[i] = this.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0.2);
             let rndX = this.cameras.main.width/12*i;
             let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150)
             containerCollides[i] = this.add.container(rndX, rndY);
             containerCollides[i].add(collides[i]);
-            if(i < this.questionSheet[this.stageNum].ans.length) {
-                containerCollides[i].add(textAns);
-            }
             this.physics.world.enable(containerCollides[i]);
+        };
+        this.shuffle(containerCollides);
+        for(var i = 0; i < boundNum; i++) {
+            var abc = Math.floor(Math.random() * Math.floor(3));
+            if(i < this.questionSheet[this.stageNum].ans.length) {
+                // @ts-ignore
+                textAns = this.add.rexBBCodeText(0, 0, `${this.questionSheet[this.stageNum].ans[i]}`,{
+                    fontFamily: "'Roboto Condensed', sans-serif",
+                    fontSize: `${Math.floor(collides[i].width/5)}px`,
+                    color: '#ffffff',
+                    halign: 'center',
+                    valign: 'center',
+                    wrap: {
+                        mode: 'word',
+                        width: collides[i].width
+                    }
+                }).setOrigin(0.5).setName('answ');
+                Phaser.Display.Align.In.Center(textAns, collides[i]);
+                containerCollides[i].add(textAns);
+                if(this.questionSheet[this.stageNum].ans[i].length > 20) {
+                    containerCollides[i].setScale(1.5, 1.5);
+                } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
+                    containerCollides[i].setScale(1, 1);
+                } else {
+                    containerCollides[i].setScale(RNDScale[abc], RNDScale[abc]);
+                }
+            }
             this.physics.add.overlap(this.mortise, containerCollides[i], function(ob1, ob2){
                 this.diamondPick = ob2;
                 this.textPick = this.diamondPick.getByName('answ') ? this.diamondPick.getByName('answ').text : null; 
                 this.pod_status = 'rewind';
             }.bind(this))
-        };
+        }
         return containerCollides;
     }
 
@@ -363,7 +384,7 @@ export class mainGame extends Phaser.Scene {
         var haha = Phaser.Math.Distance.BetweenPoints(new Phaser.Math.Vector2(this.hookLine.x, this.hookLine.y), new Phaser.Math.Vector2(this.mortiseDefault.x, this.mortiseDefault.y));
         switch(this.pod_status) {
             case 'rotate': 
-                this.hookLine.rotation += this.rotation_dir*delta/3;
+                this.hookLine.rotation += this.rotation_dir*delta/5;
                 if(this.hookLine.rotation >= Phaser.Math.DegToRad(70) || this.hookLine.rotation <= -Phaser.Math.DegToRad(70)) {
                     this.rotation_dir *= -1;
                 };
@@ -376,9 +397,10 @@ export class mainGame extends Phaser.Scene {
             case 'rewind':
                 let slowdown = 0;
                 if (this.diamondPick) {
-                    if ( this.diamondPick.scale === 1.5) {
+                    console.log(this.diamondPick);
+                    if ( this.diamondPick.scale > 1) {
                         slowdown = 6;
-                    } else if (this.diamondPick.scale === 1) {
+                    } else if (this.diamondPick.scale > 0.5 ) {
                         slowdown = 3;
                     } else {
                         slowdown = 0;
@@ -417,10 +439,16 @@ export class mainGame extends Phaser.Scene {
     createEndGame() {
         this.time.removeAllEvents();
         this.cloudx.destroy();
+        this.stageNum = 0;
+        this.gameTime = 30;
+        this.lifeSpanGame.destroy();
+        this.lifeSpanGame = this.createLifeSpan();
         this.timeText.setText(this.formatTime(30));
         this.checkInputSome = true;
         this.trueAnswerInLevel = 0;
-        this.createNote('[b]SỐ ĐÁP ÁN ĐÚNG[/b]', 'CHƠI LẠI', true);
+        this.checkGift.restart = false;
+        this.checkGift.timePlus = false;
+        this.checkGiftNote = this.createNote('[b]SỐ ĐÁP ÁN ĐÚNG[/b]', 'CHƠI LẠI', true);
     }
 
     createNextLevel() {
@@ -428,7 +456,7 @@ export class mainGame extends Phaser.Scene {
         this.cloudx.destroy();
         this.checkInputSome = true;
         this.trueAnswerInLevel = 0;
-        this.createNote('[b]CHỌN VẬT PHẨM[/b]', 'TIẾP TỤC', false);
+        this.checkGiftNote = this.createNote('[b]CHỌN VẬT PHẨM[/b]', 'TIẾP TỤC', false);
     }
 
     createNote(quesNum: string, bottomDes: string, done: boolean) {
@@ -440,9 +468,9 @@ export class mainGame extends Phaser.Scene {
         } else {
             lcloud = this.add.sprite(0,0, 'lcloud-end');
         }
-        var style = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#0000ff", wordWrap: {
-            width: lcloud.width - 100
-        } , align: "center"};
+        // var style = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#0000ff", wordWrap: {
+        //     width: lcloud.width - 100
+        // } , align: "center"};
         // var textQ = this.add.text(0, done ? 0 : -lcloud.height/3, `${quesNum}`, style);
         // @ts-ignore
         var textQ = this.add.rexBBCodeText(0, done ? -lcloud.height/7 : -lcloud.height/3, `${quesNum}`,{
@@ -474,9 +502,6 @@ export class mainGame extends Phaser.Scene {
                 this.stageNum +=1;
                 this.gameStart();
             } else {
-                this.stageNum = 0;
-                this.gameTime = 30;
-                this.lifeSpanGame = this.createLifeSpan();
                 this.gameStart();
             }
         }.bind(this));
@@ -492,7 +517,7 @@ export class mainGame extends Phaser.Scene {
         return container;
     }
 
-    createTexture(lcloud: Phaser.GameObjects.Sprite, x: number, y: number, done: boolean) {
+    createTexture(lcloud: Phaser.GameObjects.Sprite, x: number, y: number, done: boolean, container?: any) {
         var container1: Phaser.GameObjects.Container, container2: Phaser.GameObjects.Container, containerTotal: Phaser.GameObjects.Container;
         var styleQ = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#222", wordWrap: {
             width: lcloud.width - 100
@@ -508,21 +533,33 @@ export class mainGame extends Phaser.Scene {
                 this.checkGift.timePlus = true;
                 this.gameTime += 10;
                 this.timeText.setText(this.formatTime(this.gameTime));
-                container1.destroy();
+                container1.setAlpha(0.4);
+                timePlusButton.disableInteractive();
             }.bind(this));
             container2 = this.add.container(lcloud.width/1.7, 0).add([restartButton, textRestart]);
             container2.setInteractive(new Phaser.Geom.Rectangle(0, 0, container2.width, container2.height), Phaser.Geom.Rectangle.Contains);
             restartButton.on('pointerdown', function(pointer){
                 this.checkGift.restart = true;
+                this.gameTime = 30;
+                this.lifeSpanGame.destroy();
+                this.lifeSpanGame = this.createLifeSpan();
                 this.gameStart();
-                container2.destroy();
+                container2.setAlpha(0.4);
+                restartButton.disableInteractive();
+                this.checkGiftNote.destroy();
             }.bind(this));
-            if (this.checkGift.timePlus === true) container1.destroy();
-            if (this.checkGift.restart === true) container2.destroy();
+            if (this.checkGift.timePlus === true) {
+                timePlusButton.disableInteractive();
+                container1.setAlpha(0.4);
+            };
+            if (this.checkGift.restart === true) {
+                restartButton.disableInteractive();
+                container2.setAlpha(0.4);
+            };
         } else {
             var emoji = this.add.text(-10, 130, `${this.trueAnswer < 6 ? '🙁 ' : '💖 '}  ${this.trueAnswer} / 11`, styleQ).setOrigin(0.5, 0.5);
             container1 = this.add.container(0, 0, emoji);
-            var tempText = this.trueAnswer < 6 ? 'Bác sĩ hãy giúp bệnh nhân kiểm soát mức huyết áp của mình tốt hơn nhé' : 'chúc mừng bác sĩ đã giúp bệnh nhân kiểm soát huyết áp tốt';
+            var tempText = this.trueAnswer < 6 ? 'Chúc bác sĩ/dược sĩ sẽ đạt kết quả cao hơn trong lần chơi tới' : 'Chúc mừng bác sĩ/dược sĩ đã hoàn thành xuất sắc trò chơi';
             var textWinLose = this.add.text(0, 0, `${tempText}`, styleQ).setOrigin(0.5, 0.5);
             container2 = this.add.container(0, 300, textWinLose);
         }
@@ -530,51 +567,10 @@ export class mainGame extends Phaser.Scene {
         return containerTotal;
     }
 
-    // checkPointInCircle(I: Phaser.Math.Vector2, R: number, A: Phaser.Math.Vector2) {
-    //     let ok: boolean;   
-    //     let a = Math.sqrt((A.x - I.x)^2 + (A.y - I.y)^2);
-    //     let b = R;
-    //     if(a <= b) {
-    //         ok = true;
-    //         // console.log(a, b, a <= b);
-    //     } else {
-    //         ok = false;
-    //         // console.log('check false',a, b, a <= b);
-    //     };
-    //     return ok;         
-    // }
+    shuffle(array: Array<any>) {
+        array.sort(() => Math.random() - 0.5);
+    }
 
-    // checkOK(R: number) {
-    //     let i = 0;
-    //     let A = new Array();
-    //     A.push(new Phaser.Math.Vector2(Phaser.Math.Between(150, this.cameras.main.width - 150), Phaser.Math.RND.integerInRange(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150)));
-    //     while(i < 14) {
-    //         let check = false;
-    //         let F = new Phaser.Math.Vector2(Phaser.Math.RND.integerInRange(150, this.cameras.main.width - 150), Phaser.Math.RND.integerInRange(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150));
-    //         for(let k = 0; k < A.length; k++) {
-    //             if (this.checkPointInCircle(A[k], R, F)) {
-    //                 check = true;
-    //                 break;                    
-    //             };
-    //                      };
-    //         if(!check) {
-    //             i += 1;
-    //             A.push(F);
-    //         }
-    //     };
-    //     console.log(A);
-    //     return A;
-        
-    // }
-    // checkOverlapMany(sprite, list) {
-    
-    //     for (var i = 0; i < list.length; i++)
-    //     {
-    //         if (this.physics.overlap(sprite, list )) return true;
-    //     }
-        
-    //     return false;
-    // }
     render() {
         
     }

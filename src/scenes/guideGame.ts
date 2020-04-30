@@ -44,11 +44,14 @@ export class guideGame extends Phaser.Scene {
                 // });
                 
         let description = `
-        1. Bác sĩ / Dược sĩ hãy sử dụng chiếc ngàm và ròng rọc để chọn viên ngọc có chứa đáp án đúng.\n
+        1. Bác sĩ / Dược sĩ hãy sử dụng chiếc ngàm và ròng rọc để chọn viên
+        ngọc có chứa đáp án đúng.\n
         2. Chiếc ngàm sẽ đung đưa qua lại. Nhấn vào màn hình để hạ thiết bị.\n
         3. Những viên ngọc to sẽ kéo lâu hơn.\n
-        4. Người chơi có [b]3 mạng[/b]. Khi chọn sai đáp án thì viên ngọc sẽ nổ tung và người chơi bị trừ 1 mạng.\n
-        5. Người chơi có [b]2 quyền[/b] trợ giúp và sẽ được lựa chọn sử dụng giữa mỗi câu hỏi.\n
+        4. Người chơi có [b]3 mạng[/b]. Khi chọn sai đáp án thì viên ngọc sẽ
+        nổ tung và người chơi bị trừ 1 mạng.\n
+        5. Người chơi có [b]2 quyền[/b] trợ giúp và sẽ được lựa chọn sử dụng
+        giữa mỗi câu hỏi.\n
         6. Bác sĩ có [b]10 giây[/b] để đọc câu hỏi trước khi chơi.\n
         Chúc Bác sĩ / Dược sĩ kéo thật nhiều ngọc!`;
         var lcloud = this.add.sprite(0, 0, 'lcloudGuide');
@@ -59,12 +62,12 @@ export class guideGame extends Phaser.Scene {
         textQ.setOrigin(0.5, 0.5);
         textQ.setStroke('#ffffff', 10);
         // @ts-ignorets-lint
-        var textQs = this.add.rexBBCodeText(0, -lcloud.height/30, description,{
+        var textQs = this.add.rexBBCodeText(-30, -lcloud.height/30, description,{
                 fontFamily: "'Roboto Condensed', sans-serif",
                 fontSize: '28px',
                 color: '#222',
-                align: 'left',
-                origin: { x: 0.5, y: 0.5 },
+                halign: 'left',
+                valign:'top',
                 wrap: {
                     mode: 'word',
                     width: lcloud.width - 120
