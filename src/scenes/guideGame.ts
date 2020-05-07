@@ -43,34 +43,25 @@ export class guideGame extends Phaser.Scene {
                 //     }
                 // });
                 
-        let description = `
-        1. Bác sĩ / Dược sĩ hãy sử dụng chiếc ngàm và ròng rọc để chọn viên
-        ngọc có chứa đáp án đúng.\n
-        2. Chiếc ngàm sẽ đung đưa qua lại. Nhấn vào màn hình để hạ thiết bị.\n
-        3. Những viên ngọc to sẽ kéo lâu hơn.\n
-        4. Người chơi có [b]3 mạng[/b]. Khi chọn sai đáp án thì viên ngọc sẽ
-        nổ tung và người chơi bị trừ 1 mạng.\n
-        5. Người chơi có [b]2 quyền[/b] trợ giúp và sẽ được lựa chọn sử dụng
-        giữa mỗi câu hỏi.\n
-        6. Bác sĩ có [b]10 giây[/b] để đọc câu hỏi trước khi chơi.\n
-        Chúc Bác sĩ / Dược sĩ kéo thật nhiều ngọc!`;
+        let description = "1. Bác sĩ / Dược sĩ hãy sử dụng chiếc ngàm và ròng rọc để chọn viên ngọc có chứa đáp án đúng.\n2. Chiếc lưỡi câu sẽ đung đưa qua lại. Nhấn vào màn hình để hạ thiết bị.\n3. Những viên ngọc to sẽ kéo lâu hơn.\n4. Người chơi có [b]3 mạng[/b]. Khi chọn sai đáp án thì viên ngọc sẽ nổ tung và người chơi bị trừ 1 mạng.\n5. Người chơi có [b]2 quyền[/b] trợ giúp và sẽ được lựa chọn sử dụng giữa mỗi câu hỏi.\n6. Bác sĩ / Dược sĩ có [b]10 giây[/b] để đọc câu hỏi trước khi chơi.\nChúc Bác sĩ / Dược sĩ kéo thật nhiều ngọc!";
         var lcloud = this.add.sprite(0, 0, 'lcloudGuide');
-        var style = { fontFamily:   "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#0000ff", fontWeight: '900', wordWrap: {
+        var style = { fontFamily:   "Arial", fontSize: '64px', color: "#0000ff", fontWeight: '900', wordWrap: {
             width: lcloud.width
         } , align: "center"};
         var textQ = this.add.text(0, -lcloud.height/3, 'HƯỚNG DẪN', style);
         textQ.setOrigin(0.5, 0.5);
         textQ.setStroke('#ffffff', 10);
         // @ts-ignorets-lint
-        var textQs = this.add.rexBBCodeText(-30, -lcloud.height/30, description,{
-                fontFamily: "'Roboto Condensed', sans-serif",
+        var textQs = this.add.rexBBCodeText(0, -lcloud.height/35, description,{
+                fontFamily: "Arial",
                 fontSize: '28px',
                 color: '#222',
-                halign: 'left',
+                halign: 'justify',
                 valign:'top',
+                lineSpacing: 14,
                 wrap: {
                     mode: 'word',
-                    width: lcloud.width - 120
+                    width: lcloud.width-170
                 }
             }).setOrigin(0.5, 0.5);
         var bottomText = this.add.text(-10, lcloud.height/2 - 120, 'SẴN SÀNG!', { fontFamily:   "'Roboto Condensed', sans-serif", fontSize: '70px', color: "#fff", wordWrap: {
@@ -82,10 +73,7 @@ export class guideGame extends Phaser.Scene {
             this.scene.start('mainGame');
         }.bind(this));
         var container = this.add.container(this.cameras.main.width/2, this.cameras.main.height/2);
-        container.add(lcloud);
-        container.add(textQ);
-        container.add(textQs);
-        container.add(bottomText);
+        container.add([lcloud, textQ, textQs, bottomText]);
         container.setScale(0.7);
         return container;
     }

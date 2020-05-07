@@ -10,7 +10,7 @@ export class mainGame extends Phaser.Scene {
     private rotation_dir = 0.01;
     private pod_status = 'rotate';
     private initTime = 10;
-    private gameTime = 30;
+    private gameTime = 60;
     private timeText: Phaser.GameObjects.Text;
     private diamondPick;
     private textPick;
@@ -120,21 +120,31 @@ export class mainGame extends Phaser.Scene {
         this.load.image('restart', 'assets/restart.png');
         this.load.audio('explosion', ['assets/explosion.m4a']);
         this.load.audio('gamewon', ['assets/gamewon.m4a']);
+        this.load.audio('backgroundSound', ['assets/background.m4a']);
         this.load.spritesheet('exp', 'assets/exp.png', {frameWidth: 64, frameHeight: 64, endFrame: 23});
         this.load.plugin('rexbbcodetextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbbcodetextplugin.min.js', true);
     }
     create() {
         this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);
+        this.sound.add('backgroundSound', {
+            mute: false,
+            volume: 0.6,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0
+        }).play();
         this.doctor = this.add.sprite(this.cameras.main.width/2 + 50, this.cameras.main.height/2 - 100, 'doctor').setScale(0.5);
-        this.pulley = this.physics.add.sprite(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80, 'pulley').setScale(0.5);
+        this.pulley = this.add.sprite(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80, 'pulley').setScale(0.5);
         this.mortise = this.physics.add.sprite(0, 90, 'mortise').setScale(0.5);
         this.lineOnPulley = this.add.line(0, 0, 0, 0, 0, 55, 0x222222, 1).setOrigin(0);
         this.lineOnPulley.setName('lineOnPulley');
         this.hookLine = this.add.container(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80); 
         this.hookLine.add([this.mortise, this.lineOnPulley]);
-        this.physics.world.enable(this.hookLine);
-        this.hookLine.body.onWorldBounds = true;
-        this.hookLine.body.collideWorldBounds = true;
+        // this.physics.world.enable(this.hookLine);
+        // this.hookLine.body.onWorldBounds = true;
+        // this.hookLine.body.collideWorldBounds = true;
         this.mortiseDefault.x = this.hookLine.x;
         this.mortiseDefault.y = this.hookLine.y;
         this.lineReplaceOnPulley = this.add.line(this.mortiseDefault.x, this.mortiseDefault.y, 0, 0, 0, 0, 0x222222, 1).setOrigin(0);
@@ -145,13 +155,14 @@ export class mainGame extends Phaser.Scene {
              width: timeOnGame.width
          } , align: "center"} );
          this.timeText.setOrigin(0.5, 0.5);
-         var containerTime = this.add.container(this.cameras.main.width - 150, 50);
+         var containerTime = this.add.container(this.cameras.main.width - 280, 50);
          // end Time
          containerTime.add(timeOnGame);
          containerTime.add(this.timeText);
          containerTime.setScale(0.5);
          this.lifeSpanGame = this.createLifeSpan();
          this.mortise.body.onWorldBounds = true;
+         this.mortise.body.collideWorldBounds = true;
          this.physics.world.on('worldbounds', function(body) {
              this.diamondPick = null;
              this.pod_status = 'rewind';
@@ -249,13 +260,13 @@ export class mainGame extends Phaser.Scene {
         var collides = new Array();
         var containerCollides = new Array();
         var dArray = ['jw11','jw21'];
-        var boundNum = 12;
-        var RNDScale = [0.5, 1, 1.5];
+        var boundNum = 11;
+        var RNDScale = [0.5, 1, 2];
         var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i < boundNum; i++) {
             collides[i] = this.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0.2);
-            let rndX = this.cameras.main.width/12*i;
-            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 150 , this.cameras.main.height - 150)
+            let rndX = this.cameras.main.width/11*i + 75;
+            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 50 , this.cameras.main.height - 200)
             containerCollides[i] = this.add.container(rndX, rndY);
             containerCollides[i].add(collides[i]);
             this.physics.world.enable(containerCollides[i]);
@@ -265,23 +276,25 @@ export class mainGame extends Phaser.Scene {
             var abc = Math.floor(Math.random() * Math.floor(3));
             if(i < this.questionSheet[this.stageNum].ans.length) {
                 // @ts-ignore
-                textAns = this.add.rexBBCodeText(0, 0, `${this.questionSheet[this.stageNum].ans[i]}`,{
+                textAns = this.add.rexBBCodeText(0, 0, this.questionSheet[this.stageNum].ans[i],{
                     fontFamily: "'Roboto Condensed', sans-serif",
-                    fontSize: `${Math.floor(collides[i].width/5)}px`,
+                    fontSize: `${Math.floor(collides[i].width/3)}px`,
                     color: '#ffffff',
                     halign: 'center',
                     valign: 'center',
                     wrap: {
                         mode: 'word',
-                        width: collides[i].width
+                        width: collides[i].width-30
                     }
                 }).setOrigin(0.5).setName('answ');
                 Phaser.Display.Align.In.Center(textAns, collides[i]);
                 containerCollides[i].add(textAns);
                 if(this.questionSheet[this.stageNum].ans[i].length > 20) {
-                    containerCollides[i].setScale(1.5, 1.5);
+                    containerCollides[i].setScale(2, 2);
+                    textAns.setFontSize(10);
                 } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
                     containerCollides[i].setScale(1, 1);
+                    textAns.setFontSize(12);
                 } else {
                     containerCollides[i].setScale(RNDScale[abc], RNDScale[abc]);
                 }
@@ -332,10 +345,10 @@ export class mainGame extends Phaser.Scene {
                         origin: { x: 0.5, y: 0.5 },
                         wrap: {
                             mode: 'word',
-                            width: lcloud.width - 100
+                            width: cloudm.width - 100
                         }
                     }).setOrigin(0.5, 0.5);
-                    this.cloudx = this.add.container(this.cameras.main.width/2, 100, [cloudm, quesx])
+                    this.cloudx = this.add.container(this.cameras.main.width/2, 100, [cloudm, quesx]).setScale(0.8)
                     this.checkInputSome = false;
                     this.createTimeGame();
                 }
@@ -440,11 +453,12 @@ export class mainGame extends Phaser.Scene {
         this.time.removeAllEvents();
         this.cloudx.destroy();
         this.stageNum = 0;
-        this.gameTime = 30;
+        this.gameTime = 60;
         this.lifeSpanGame.destroy();
         this.lifeSpanGame = this.createLifeSpan();
-        this.timeText.setText(this.formatTime(30));
+        this.timeText.setText(this.formatTime(this.gameTime));
         this.checkInputSome = true;
+        this.trueAnswer = 0;
         this.trueAnswerInLevel = 0;
         this.checkGift.restart = false;
         this.checkGift.timePlus = false;
@@ -540,7 +554,7 @@ export class mainGame extends Phaser.Scene {
             container2.setInteractive(new Phaser.Geom.Rectangle(0, 0, container2.width, container2.height), Phaser.Geom.Rectangle.Contains);
             restartButton.on('pointerdown', function(pointer){
                 this.checkGift.restart = true;
-                this.gameTime = 30;
+                this.gameTime = 60;
                 this.lifeSpanGame.destroy();
                 this.lifeSpanGame = this.createLifeSpan();
                 this.gameStart();
