@@ -463,7 +463,7 @@ export class mainGame extends Phaser.Scene {
         this.lifeSpanGame = this.createLifeSpan();
         this.timeText.setText(this.formatTime(this.gameTime));
         this.checkInputSome = true;
-        this.trueAnswer = 0;
+        // this.trueAnswer = 0;
         this.trueAnswerInLevel = 0;
         this.checkGift.restart = false;
         this.checkGift.timePlus = false;
@@ -561,6 +561,7 @@ export class mainGame extends Phaser.Scene {
                 this.checkGift.restart = true;
                 this.gameTime = 60;
                 this.lifeSpanGame.destroy();
+                this.trueAnswer -= this.trueAnswerInLevel;
                 this.lifeSpanGame = this.createLifeSpan();
                 this.gameStart();
                 container2.setAlpha(0.4);
