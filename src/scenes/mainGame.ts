@@ -137,7 +137,7 @@ export class mainGame extends Phaser.Scene {
         }).play();
         this.doctor = this.add.sprite(this.cameras.main.width/2 + 50, this.cameras.main.height/2 - 100, 'doctor').setScale(0.5);
         this.pulley = this.add.sprite(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80, 'pulley').setScale(0.5);
-        this.mortise = this.physics.add.sprite(0, 90, 'mortise').setScale(0.5);
+        this.mortise = this.physics.add.sprite(0, 90, 'mortise').setCircle(35, 0, 50).setScale(0.5);
         this.lineOnPulley = this.add.line(0, 0, 0, 0, 0, 55, 0x222222, 1).setOrigin(0);
         this.lineOnPulley.setName('lineOnPulley');
         this.hookLine = this.add.container(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80); 
@@ -265,8 +265,13 @@ export class mainGame extends Phaser.Scene {
         var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i < boundNum; i++) {
             collides[i] = this.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0.2);
-            let rndX = this.cameras.main.width/11*i + 75;
-            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 50 , this.cameras.main.height - 200)
+            let rndX = 0;
+            if(i === boundNum - 1) {
+                rndX = this.cameras.main.width/11*i + 25;
+            } else {
+                rndX = this.cameras.main.width/11*i + 75;
+            }
+            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 75 , this.cameras.main.height - 180)
             containerCollides[i] = this.add.container(rndX, rndY);
             containerCollides[i].add(collides[i]);
             this.physics.world.enable(containerCollides[i]);
@@ -278,20 +283,20 @@ export class mainGame extends Phaser.Scene {
                 // @ts-ignore
                 textAns = this.add.rexBBCodeText(0, 0, this.questionSheet[this.stageNum].ans[i],{
                     fontFamily: "'Roboto Condensed', sans-serif",
-                    fontSize: `${Math.floor(collides[i].width/3)}px`,
+                    fontSize: `${Math.floor(collides[i].width/5)}px`,
                     color: '#ffffff',
                     halign: 'center',
                     valign: 'center',
                     wrap: {
                         mode: 'word',
-                        width: collides[i].width-30
+                        width: collides[i].width-35
                     }
                 }).setOrigin(0.5).setName('answ');
                 Phaser.Display.Align.In.Center(textAns, collides[i]);
                 containerCollides[i].add(textAns);
                 if(this.questionSheet[this.stageNum].ans[i].length > 20) {
                     containerCollides[i].setScale(2, 2);
-                    textAns.setFontSize(10);
+                    textAns.setFontSize(9);
                 } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
                     containerCollides[i].setScale(1, 1);
                     textAns.setFontSize(12);
@@ -398,7 +403,7 @@ export class mainGame extends Phaser.Scene {
         switch(this.pod_status) {
             case 'rotate': 
                 this.hookLine.rotation += this.rotation_dir*delta/5;
-                if(this.hookLine.rotation >= Phaser.Math.DegToRad(70) || this.hookLine.rotation <= -Phaser.Math.DegToRad(70)) {
+                if(this.hookLine.rotation >= Phaser.Math.DegToRad(75) || this.hookLine.rotation <= -Phaser.Math.DegToRad(75)) {
                     this.rotation_dir *= -1;
                 };
                 break;

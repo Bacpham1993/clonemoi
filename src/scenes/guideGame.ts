@@ -43,7 +43,7 @@ export class guideGame extends Phaser.Scene {
                 //     }
                 // });
                 
-        let description = "1. Bác sĩ / Dược sĩ hãy sử dụng chiếc ngàm và ròng rọc để chọn viên ngọc có chứa đáp án đúng.\n2. Chiếc lưỡi câu sẽ đung đưa qua lại. Nhấn vào màn hình để hạ thiết bị.\n3. Những viên ngọc to sẽ kéo lâu hơn.\n4. Người chơi có [b]3 mạng[/b]. Khi chọn sai đáp án thì viên ngọc sẽ nổ tung và người chơi bị trừ 1 mạng.\n5. Người chơi có [b]2 quyền[/b] trợ giúp và sẽ được lựa chọn sử dụng giữa mỗi câu hỏi.\n6. Bác sĩ / Dược sĩ có [b]10 giây[/b] để đọc câu hỏi trước khi chơi.\nChúc Bác sĩ / Dược sĩ kéo thật nhiều ngọc!";
+        let description = "1. Bác sĩ / Dược sĩ hãy sử dụng chiếc ngàm và ròng rọc để chọn viên ngọc có chứa đáp án đúng.\n\n2. Chiếc lưỡi câu sẽ đung đưa qua lại. Nhấn vào màn hình để hạ thiết bị.\n\n3. Những viên ngọc to sẽ kéo lâu hơn.\n\n4. Người chơi có [b]3 mạng[/b]. Khi chọn sai đáp án thì viên ngọc sẽ nổ tung và người chơi bị trừ 1 mạng.\n\n5. Người chơi có [b]2 quyền[/b] trợ giúp và sẽ được lựa chọn sử dụng giữa mỗi câu hỏi.\n\n6. Bác sĩ / Dược sĩ có [b]10 giây[/b] để đọc câu hỏi trước khi chơi.\n\nChúc Bác sĩ / Dược sĩ kéo thật nhiều ngọc!";
         var lcloud = this.add.sprite(0, 0, 'lcloudGuide');
         var style = { fontFamily:   "Arial", fontSize: '64px', color: "#0000ff", fontWeight: '900', wordWrap: {
             width: lcloud.width
@@ -52,18 +52,19 @@ export class guideGame extends Phaser.Scene {
         textQ.setOrigin(0.5, 0.5);
         textQ.setStroke('#ffffff', 10);
         // @ts-ignorets-lint
-        var textQs = this.add.rexBBCodeText(0, -lcloud.height/35, description,{
+        var textQs = this.add.rexBBCodeText(0, 0, description,{
                 fontFamily: "Arial",
                 fontSize: '28px',
                 color: '#222',
                 halign: 'justify',
                 valign:'top',
-                lineSpacing: 14,
+                lineSpacing: 1,
                 wrap: {
                     mode: 'word',
                     width: lcloud.width-170
                 }
-            }).setOrigin(0.5, 0.5);
+            }).setOrigin(0.5, 0);
+            Phaser.Display.Align.In.Center(textQs, lcloud);
         var bottomText = this.add.text(-10, lcloud.height/2 - 120, 'SẴN SÀNG!', { fontFamily:   "'Roboto Condensed', sans-serif", fontSize: '70px', color: "#fff", wordWrap: {
             width: lcloud.width
         }  , align: "center"});
