@@ -40,47 +40,47 @@ export class mainGame extends Phaser.Scene {
             ],
             rig: [1]
         },
-        // {
-        //     ques: 'Tỉ lệ tăng huyết áp ở nhóm dân số > 60 tuổi ở Việt Nam',
-        //     ans: [
-        //         '> 60%', 
-        //         'giống nhóm dân số trẻ', 
-        //         'tăng theo tuổi – tuổi càng cao tỉ lệ càng cao', 
-        //         'khoảng 30%'
-        //     ],
-        //     rig: [0,2]
-        // },
-        // {
-        //     ques: 'Những đặc điểm của bệnh nhân tăng huyết áp > 60 tuổi',
-        //     ans: [
-        //         'hoạt tính hệ renin suy giảm', 
-        //         'thường gặp tăng huyết áp tâm thu đơn độc', 
-        //         'nguy cơ đột quỵ cao', 
-        //         'nhiều bệnh lý mắc kèm',
-        //         'thường gặp hội chứng lão hóa'
-        //     ],
-        //     rig: [0,1,2,3,4]
-        // },
-        // {
-        //     ques: 'Theo khuyến cáo của hội Tim mạch/ THA châu  u và hội Tim mạch học Việt Nam, nhóm thuốc được ưu tiên cho bệnh nhân cao tuổi – tăng huyết áp tâm thu đơn độc là',
-        //     ans: [
-        //         'Lợi tiểu và chẹn kênh canxi', 
-        //         'các thuốc ức chế hệ RAS', 
-        //         'vai trò các nhóm thuốc như nhau', 
-        //         'chẹn beta' 
-        //     ],
-        //     rig: [0]
-        // },
-        // {
-        //     ques: 'theo các công trình nghiên cứu, nhóm thuốc nào có khả năng ngừa đột quỵ tốt hơn các nhóm khác',
-        //     ans: [
-        //         'lợi tiểu thiazide-like và chẹn kênh canxi', 
-        //         'ƯCMC/ƯCTT', 
-        //         'chẹn beta', 
-        //         'cả 5 nhóm đều ngừa đột quỵ tốt' 
-        //     ],
-        //     rig: [0]
-        // },
+        {
+            ques: 'Tỉ lệ tăng huyết áp ở nhóm dân số > 60 tuổi ở Việt Nam',
+            ans: [
+                '> 60%', 
+                'giống nhóm dân số trẻ', 
+                'tăng theo tuổi – tuổi càng cao tỉ lệ càng cao', 
+                'khoảng 30%'
+            ],
+            rig: [0,2]
+        },
+        {
+            ques: 'Những đặc điểm của bệnh nhân tăng huyết áp > 60 tuổi',
+            ans: [
+                'hoạt tính hệ renin suy giảm', 
+                'thường gặp tăng huyết áp tâm thu đơn độc', 
+                'nguy cơ đột quỵ cao', 
+                'nhiều bệnh lý mắc kèm',
+                'thường gặp hội chứng lão hóa'
+            ],
+            rig: [0,1,2,3,4]
+        },
+        {
+            ques: 'Theo khuyến cáo của hội Tim mạch/ THA châu  u và hội Tim mạch học Việt Nam, nhóm thuốc được ưu tiên cho bệnh nhân cao tuổi – tăng huyết áp tâm thu đơn độc là',
+            ans: [
+                'Lợi tiểu và chẹn kênh canxi', 
+                'các thuốc ức chế hệ RAS', 
+                'vai trò các nhóm thuốc như nhau', 
+                'chẹn beta' 
+            ],
+            rig: [0]
+        },
+        {
+            ques: 'theo các công trình nghiên cứu, nhóm thuốc nào có khả năng ngừa đột quỵ tốt hơn các nhóm khác',
+            ans: [
+                'lợi tiểu thiazide-like và chẹn kênh canxi', 
+                'ƯCMC/ƯCTT', 
+                'chẹn beta', 
+                'cả 5 nhóm đều ngừa đột quỵ tốt' 
+            ],
+            rig: [0]
+        },
         {
             ques: 'Ở Việt Nam có những viên phối hợp cố định nào của lợi tiểu và chẹn kênh canxi',
             ans: [
