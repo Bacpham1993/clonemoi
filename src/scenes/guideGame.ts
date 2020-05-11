@@ -43,7 +43,7 @@ export class guideGame extends Phaser.Scene {
                 //     }
                 // });
                 
-        let description = "1. Bác sĩ / Dược sĩ hãy sử dụng chiếc ngàm và ròng rọc để chọn viên ngọc có chứa đáp án đúng.\n\n2. Chiếc lưỡi câu sẽ đung đưa qua lại. Nhấn vào màn hình để hạ thiết bị.\n\n3. Những viên ngọc to sẽ kéo lâu hơn.\n\n4. Người chơi có [b]3 mạng[/b]. Khi chọn sai đáp án thì viên ngọc sẽ nổ tung và người chơi bị trừ 1 mạng.\n\n5. Người chơi có [b]2 quyền[/b] trợ giúp và sẽ được lựa chọn sử dụng giữa mỗi câu hỏi.\n\n6. Bác sĩ / Dược sĩ có [b]10 giây[/b] để đọc câu hỏi trước khi chơi.\n\nChúc Bác sĩ / Dược sĩ kéo thật nhiều ngọc!";
+        let description = "1. Bác sĩ / Dược sĩ hãy sử dụng chiếc lưỡi câu và ròng rọc để chọn viên ngọc có chứa đáp án đúng.\n\n2. Chiếc lưỡi câu sẽ đung đưa qua lại. Nhấn vào màn hình để hạ thiết bị.\n\n3. Những viên ngọc to sẽ kéo lâu hơn.\n\n4. Người chơi có [b]3 mạng[/b]. Khi chọn sai đáp án thì viên ngọc sẽ nổ tung và người chơi bị trừ 1 mạng.\n\n5. Người chơi có [b]2 quyền[/b] trợ giúp và sẽ được lựa chọn sử dụng giữa mỗi câu hỏi.\n\n6. Bác sĩ / Dược sĩ có [b]10 giây[/b] để đọc câu hỏi trước khi chơi.\n\nChúc Bác sĩ / Dược sĩ kéo thật nhiều ngọc!";
         var lcloud = this.add.sprite(0, 0, 'lcloudGuide');
         var style = { fontFamily:   "Arial", fontSize: '64px', color: "#0000ff", fontWeight: '900', wordWrap: {
             width: lcloud.width

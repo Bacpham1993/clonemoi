@@ -40,47 +40,47 @@ export class mainGame extends Phaser.Scene {
             ],
             rig: [1]
         },
-        {
-            ques: 'Tỉ lệ tăng huyết áp ở nhóm dân số > 60 tuổi ở Việt Nam',
-            ans: [
-                '> 60%', 
-                'giống nhóm dân số trẻ', 
-                'tăng theo tuổi – tuổi càng cao tỉ lệ càng cao', 
-                'khoảng 30%'
-            ],
-            rig: [0,2]
-        },
-        {
-            ques: 'Những đặc điểm của bệnh nhân tăng huyết áp > 60 tuổi',
-            ans: [
-                'hoạt tính hệ renin suy giảm', 
-                'thường gặp tăng huyết áp tâm thu đơn độc', 
-                'nguy cơ đột quỵ cao', 
-                'nhiều bệnh lý mắc kèm',
-                'thường gặp hội chứng lão hóa'
-            ],
-            rig: [0,1,2,3,4]
-        },
-        {
-            ques: 'Theo khuyến cáo của hội Tim mạch/ THA châu  u và hội Tim mạch học Việt Nam, nhóm thuốc được ưu tiên cho bệnh nhân cao tuổi – tăng huyết áp tâm thu đơn độc là',
-            ans: [
-                'Lợi tiểu và chẹn kênh canxi', 
-                'các thuốc ức chế hệ RAS', 
-                'vai trò các nhóm thuốc như nhau', 
-                'chẹn beta' 
-            ],
-            rig: [0]
-        },
-        {
-            ques: 'theo các công trình nghiên cứu, nhóm thuốc nào có khả năng ngừa đột quỵ tốt hơn các nhóm khác',
-            ans: [
-                'lợi tiểu thiazide-like và chẹn kênh canxi', 
-                'ƯCMC/ƯCTT', 
-                'chẹn beta', 
-                'cả 5 nhóm đều ngừa đột quỵ tốt' 
-            ],
-            rig: [0]
-        },
+        // {
+        //     ques: 'Tỉ lệ tăng huyết áp ở nhóm dân số > 60 tuổi ở Việt Nam',
+        //     ans: [
+        //         '> 60%', 
+        //         'giống nhóm dân số trẻ', 
+        //         'tăng theo tuổi – tuổi càng cao tỉ lệ càng cao', 
+        //         'khoảng 30%'
+        //     ],
+        //     rig: [0,2]
+        // },
+        // {
+        //     ques: 'Những đặc điểm của bệnh nhân tăng huyết áp > 60 tuổi',
+        //     ans: [
+        //         'hoạt tính hệ renin suy giảm', 
+        //         'thường gặp tăng huyết áp tâm thu đơn độc', 
+        //         'nguy cơ đột quỵ cao', 
+        //         'nhiều bệnh lý mắc kèm',
+        //         'thường gặp hội chứng lão hóa'
+        //     ],
+        //     rig: [0,1,2,3,4]
+        // },
+        // {
+        //     ques: 'Theo khuyến cáo của hội Tim mạch/ THA châu  u và hội Tim mạch học Việt Nam, nhóm thuốc được ưu tiên cho bệnh nhân cao tuổi – tăng huyết áp tâm thu đơn độc là',
+        //     ans: [
+        //         'Lợi tiểu và chẹn kênh canxi', 
+        //         'các thuốc ức chế hệ RAS', 
+        //         'vai trò các nhóm thuốc như nhau', 
+        //         'chẹn beta' 
+        //     ],
+        //     rig: [0]
+        // },
+        // {
+        //     ques: 'theo các công trình nghiên cứu, nhóm thuốc nào có khả năng ngừa đột quỵ tốt hơn các nhóm khác',
+        //     ans: [
+        //         'lợi tiểu thiazide-like và chẹn kênh canxi', 
+        //         'ƯCMC/ƯCTT', 
+        //         'chẹn beta', 
+        //         'cả 5 nhóm đều ngừa đột quỵ tốt' 
+        //     ],
+        //     rig: [0]
+        // },
         {
             ques: 'Ở Việt Nam có những viên phối hợp cố định nào của lợi tiểu và chẹn kênh canxi',
             ans: [
@@ -142,9 +142,6 @@ export class mainGame extends Phaser.Scene {
         this.lineOnPulley.setName('lineOnPulley');
         this.hookLine = this.add.container(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80); 
         this.hookLine.add([this.mortise, this.lineOnPulley]);
-        // this.physics.world.enable(this.hookLine);
-        // this.hookLine.body.onWorldBounds = true;
-        // this.hookLine.body.collideWorldBounds = true;
         this.mortiseDefault.x = this.hookLine.x;
         this.mortiseDefault.y = this.hookLine.y;
         this.lineReplaceOnPulley = this.add.line(this.mortiseDefault.x, this.mortiseDefault.y, 0, 0, 0, 0, 0x222222, 1).setOrigin(0);
@@ -235,8 +232,13 @@ export class mainGame extends Phaser.Scene {
         }, this)
         gamewon.play();
         if(this.trueAnswerInLevel === trueLength) {
-            this.createNextLevel();   
+            if (this.stageNum === this.questionSheet.length - 1) {
+                this.createEndGame();
+            } else {
+                this.createNextLevel();   
+            }
         }
+        // console.log(this.trueAnswer, trueLength);
     }
 
     createLifeSpan(){
@@ -415,7 +417,7 @@ export class mainGame extends Phaser.Scene {
             case 'rewind':
                 let slowdown = 0;
                 if (this.diamondPick) {
-                    console.log(this.diamondPick);
+                    // console.log(this.diamondPick);
                     if ( this.diamondPick.scale > 1) {
                         slowdown = 6;
                     } else if (this.diamondPick.scale > 0.5 ) {
@@ -438,13 +440,14 @@ export class mainGame extends Phaser.Scene {
                     if(this.diamondPick) {
                         this.diamondPick.destroy();
                         if (typeof(this.diamondPick.getByName('answ')) !== null) {
-                            const quesOK = this.questionSheet[this.stageNum];
-                            const ansOK = this.textPick;
+                            let quesOK = this.questionSheet[this.stageNum];
+                            let ansOK = this.textPick;
                             if(quesOK.rig.includes(quesOK.ans.indexOf(ansOK))) {
                                 this.createRight(quesOK.rig.length);
                             } else {
                                 this.createBomb(ansOK);
                             }
+                            // console.log(this.trueAnswer);
                         }
                     }
                     this.pod_status = 'rotate';
@@ -521,6 +524,7 @@ export class mainGame extends Phaser.Scene {
                 this.stageNum +=1;
                 this.gameStart();
             } else {
+                this.trueAnswer = 0;
                 this.gameStart();
             }
         }.bind(this));
@@ -560,6 +564,7 @@ export class mainGame extends Phaser.Scene {
             restartButton.on('pointerdown', function(pointer){
                 this.checkGift.restart = true;
                 this.gameTime = 60;
+                this.timeText.setText(this.formatTime(this.gameTime));
                 this.lifeSpanGame.destroy();
                 this.trueAnswer -= this.trueAnswerInLevel;
                 this.lifeSpanGame = this.createLifeSpan();
