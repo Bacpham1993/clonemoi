@@ -23,6 +23,8 @@ export class mainGame extends Phaser.Scene {
     private gameTimeEvent;
     private checkGiftNote;
     private cloudx;
+    private lastTimeOfStage: number;
+    private lastLifeSpanGame: number;
     private checkGift = {
         timePlus: false,
         restart: false
@@ -231,7 +233,9 @@ export class mainGame extends Phaser.Scene {
             heart.destroy();
         }, this)
         gamewon.play();
+        console.log(trueLength, this.trueAnswerInLevel, this.questionSheet.length);
         if(this.trueAnswerInLevel === trueLength) {
+            // console.log(trueLength, this.trueAnswerInLevel, this.questionSheet.length);
             if (this.stageNum === this.questionSheet.length - 1) {
                 this.createEndGame();
             } else {
@@ -241,12 +245,17 @@ export class mainGame extends Phaser.Scene {
         // console.log(this.trueAnswer, trueLength);
     }
 
-    createLifeSpan(){
+    createLifeSpan(star = 3){
         var containerStar = this.add.container(50, 50);
-        var star1 = this.add.sprite(0, 0, 'star');
-        var star2 = this.add.sprite(140, 0 , 'star');
-        var star3 = this.add.sprite(280, 0, 'star');
-        containerStar.add([star1, star2, star3]).setScale(0.5, 0.5);
+        var starCon = new Array();
+        for(var i = 0; i < star; i++) { 
+            starCon[i] = this.add.sprite(140*i, 0, 'star');
+        }
+        // var star1 = this.add.sprite(0, 0, 'star');
+        // var star2 = this.add.sprite(140, 0 , 'star');
+        // var star3 = this.add.sprite(280, 0, 'star');
+        containerStar.add(starCon);
+        containerStar.setScale(0.5, 0.5);
         this.tweens.add({
             targets: containerStar,
             alpha: { from: 0.5, to: 1 },
@@ -261,9 +270,9 @@ export class mainGame extends Phaser.Scene {
     createDiamond(){
         var collides = new Array();
         var containerCollides = new Array();
-        var dArray = ['jw11','jw21'];
+        var dArray = ['jw13','jw23'];
         var boundNum = 11;
-        var RNDScale = [0.5, 1, 2];
+        var RNDScale = [2/3, 1, 4/3];
         var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i < boundNum; i++) {
             collides[i] = this.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0.2);
@@ -291,14 +300,14 @@ export class mainGame extends Phaser.Scene {
                     valign: 'center',
                     wrap: {
                         mode: 'word',
-                        width: collides[i].width-35
+                        width: collides[i].width-65
                     }
                 }).setOrigin(0.5).setName('answ');
                 Phaser.Display.Align.In.Center(textAns, collides[i]);
                 containerCollides[i].add(textAns);
                 if(this.questionSheet[this.stageNum].ans[i].length > 20) {
-                    containerCollides[i].setScale(2, 2);
-                    textAns.setFontSize(9);
+                    containerCollides[i].setScale(4/3, 4/3);
+                    textAns.setFontSize(11);
                 } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
                     containerCollides[i].setScale(1, 1);
                     textAns.setFontSize(12);
@@ -447,7 +456,6 @@ export class mainGame extends Phaser.Scene {
                             } else {
                                 this.createBomb(ansOK);
                             }
-                            // console.log(this.trueAnswer);
                         }
                     }
                     this.pod_status = 'rotate';
@@ -466,7 +474,6 @@ export class mainGame extends Phaser.Scene {
         this.lifeSpanGame = this.createLifeSpan();
         this.timeText.setText(this.formatTime(this.gameTime));
         this.checkInputSome = true;
-        // this.trueAnswer = 0;
         this.trueAnswerInLevel = 0;
         this.checkGift.restart = false;
         this.checkGift.timePlus = false;
@@ -477,7 +484,6 @@ export class mainGame extends Phaser.Scene {
         this.time.removeAllEvents();
         this.cloudx.destroy();
         this.checkInputSome = true;
-        this.trueAnswerInLevel = 0;
         this.checkGiftNote = this.createNote('[b]CHỌN VẬT PHẨM[/b]', 'TIẾP TỤC', false);
     }
 
@@ -521,6 +527,9 @@ export class mainGame extends Phaser.Scene {
         bottomText.on('pointerdown', function(pointer){
             container.destroy();
             if(!done) {
+                this.trueAnswerInLevel = 0;
+                this.lastTimeOfStage = this.gameTime;
+                this.lastLifeSpanGame = this.lifeSpanGame.length; 
                 this.stageNum +=1;
                 this.gameStart();
             } else {
@@ -563,15 +572,16 @@ export class mainGame extends Phaser.Scene {
             container2.setInteractive(new Phaser.Geom.Rectangle(0, 0, container2.width, container2.height), Phaser.Geom.Rectangle.Contains);
             restartButton.on('pointerdown', function(pointer){
                 this.checkGift.restart = true;
-                this.gameTime = 60;
+                this.gameTime = this.stageNum === 0 ? 60 : this.lastTimeOfStage;
                 this.timeText.setText(this.formatTime(this.gameTime));
-                this.lifeSpanGame.destroy();
                 this.trueAnswer -= this.trueAnswerInLevel;
-                this.lifeSpanGame = this.createLifeSpan();
-                this.gameStart();
+                this.trueAnswerInLevel = 0;
+                this.lifeSpanGame.destroy();
+                this.lifeSpanGame = this.stageNum === 0 ? this.createLifeSpan() : this.createLifeSpan(this.lastLifeSpanGame) ;
                 container2.setAlpha(0.4);
                 restartButton.disableInteractive();
                 this.checkGiftNote.destroy();
+                this.gameStart();
             }.bind(this));
             if (this.checkGift.timePlus === true) {
                 timePlusButton.disableInteractive();
