@@ -64,7 +64,7 @@ export class mainGame extends Phaser.Scene {
             rig: [0,1,2,3,4]
         },
         {
-            ques: 'Theo khuyến cáo của hội Tim mạch/ THA châu  u và hội Tim mạch học Việt Nam, nhóm thuốc được ưu tiên cho bệnh nhân cao tuổi – tăng huyết áp tâm thu đơn độc là',
+            ques: 'Theo khuyến cáo của hội Tim mạch / THA châu Âu và hội Tim mạch học Việt Nam, nhóm thuốc được ưu tiên cho bệnh nhân cao tuổi – tăng huyết áp tâm thu đơn độc là',
             ans: [
                 'Lợi tiểu và chẹn kênh canxi', 
                 'các thuốc ức chế hệ RAS', 
@@ -74,7 +74,7 @@ export class mainGame extends Phaser.Scene {
             rig: [0]
         },
         {
-            ques: 'theo các công trình nghiên cứu, nhóm thuốc nào có khả năng ngừa đột quỵ tốt hơn các nhóm khác',
+            ques: 'Theo các công trình nghiên cứu, nhóm thuốc nào có khả năng ngừa đột quỵ tốt hơn các nhóm khác',
             ans: [
                 'lợi tiểu thiazide-like và chẹn kênh canxi', 
                 'ƯCMC/ƯCTT', 
