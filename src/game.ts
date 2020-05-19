@@ -8,11 +8,11 @@ const config: Phaser.Types.Core.GameConfig = {
   title: "Gold Miner by Bac Pham",
   version: "1.0",
   // parent: 'phaser-app',
+  width: window.innerWidth,
+  height: window.innerHeight,
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: '100%',
-    height: '100%',
   },
   // resolution: window.devicePixelRatio || 1,
   type: Phaser.AUTO,

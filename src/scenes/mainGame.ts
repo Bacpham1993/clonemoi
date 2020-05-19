@@ -128,9 +128,6 @@ export class mainGame extends Phaser.Scene {
         this.load.plugin('rexbbcodetextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbbcodetextplugin.min.js', true);
     }
     create() {
-        // this.scale.on('resize', (gameSize, baseSize, displaySize, resolution, previousWidth, previousHeight) => {
-            // this.scale.setGameSize(window.innerWidth, window.innerHeight);
-        // });
         this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);
         this.sound.add('backgroundSound', {
             mute: false,
