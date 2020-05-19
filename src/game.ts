@@ -7,7 +7,7 @@ import { mainGame } from "./scenes/mainGame";
 const config: Phaser.Types.Core.GameConfig = {
   title: "Gold Miner by Bac Pham",
   version: "1.0",
-  parent: 'phaser-app',
+  // parent: 'phaser-app',
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
