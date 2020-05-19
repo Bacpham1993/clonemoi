@@ -129,7 +129,7 @@ export class mainGame extends Phaser.Scene {
     }
     create() {
         // this.scale.on('resize', (gameSize, baseSize, displaySize, resolution, previousWidth, previousHeight) => {
-            this.scale.setGameSize(window.innerWidth, window.innerHeight);
+            // this.scale.setGameSize(window.innerWidth, window.innerHeight);
         // });
         this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);
         this.sound.add('backgroundSound', {
