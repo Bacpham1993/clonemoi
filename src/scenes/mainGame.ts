@@ -29,7 +29,7 @@ export class mainGame extends Phaser.Scene {
         timePlus: false,
         restart: false
     };
-    private resizeResolution = window.innerWidth/1333;
+    private resizeResolution = Math.round((window.innerWidth/1333) * 100)/100;
     private lifeSpanGame: Phaser.GameObjects.Container;
     private diamondGame: Array<Phaser.GameObjects.Container>;
     private questionSheet = [
@@ -155,7 +155,7 @@ export class mainGame extends Phaser.Scene {
              width: timeOnGame.width
          } , align: "center"} );
          this.timeText.setOrigin(0.5, 0.5);
-         var containerTime = this.add.container(this.cameras.main.width - 250*this.resizeResolution, 50);
+         var containerTime = this.add.container(this.cameras.main.width - 210*this.resizeResolution, 50);
          // end Time
          containerTime.add(timeOnGame);
          containerTime.add(this.timeText);
@@ -368,7 +368,7 @@ export class mainGame extends Phaser.Scene {
                             width: cloudm.width - 100
                         }
                     }).setOrigin(0.5, 0.5);
-                    this.cloudx = this.add.container(this.cameras.main.width/2, 100, [cloudm, quesx]).setScale(0.7*this.resizeResolution)
+                    this.cloudx = this.add.container(this.cameras.main.width/2, 100, [cloudm, quesx]).setScale(0.6*this.resizeResolution)
                     this.checkInputSome = false;
                     this.createTimeGame();
                 }
@@ -398,7 +398,7 @@ export class mainGame extends Phaser.Scene {
         container.add(textQ);
         container.add(textQs);
         container.add(time10);
-        container.setScale(0.5*this.resizeResolution);
+        container.setScale(0.35*this.resizeResolution);
     }
 
     formatTime(seconds){
