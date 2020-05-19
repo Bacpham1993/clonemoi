@@ -29,7 +29,6 @@ export class mainGame extends Phaser.Scene {
         timePlus: false,
         restart: false
     };
-    private resizeResolution = window.innerWidth/1333;
     private lifeSpanGame: Phaser.GameObjects.Container;
     private diamondGame: Array<Phaser.GameObjects.Container>;
     private questionSheet = [
@@ -155,7 +154,7 @@ export class mainGame extends Phaser.Scene {
              width: timeOnGame.width
          } , align: "center"} );
          this.timeText.setOrigin(0.5, 0.5);
-         var containerTime = this.add.container(this.cameras.main.width - 250*this.resizeResolution, 50);
+         var containerTime = this.add.container(this.cameras.main.width - 280, 50);
          // end Time
          containerTime.add(timeOnGame);
          containerTime.add(this.timeText);
@@ -272,21 +271,18 @@ export class mainGame extends Phaser.Scene {
         var collides = new Array();
         var containerCollides = new Array();
         var dArray = ['jw13','jw23'];
-        var boundNum = 9;
+        var boundNum = 11;
         var RNDScale = [2/3, 1, 4/3];
-        RNDScale = RNDScale.map((val) => {
-            return val * (this.resizeResolution - 0.1);
-        });
         var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i < boundNum; i++) {
             collides[i] = this.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0.2);
             let rndX = 0;
             if(i === boundNum - 1) {
-                rndX = this.cameras.main.width/9*i + 25*this.resizeResolution;
+                rndX = this.cameras.main.width/11*i + 25;
             } else {
-                rndX = this.cameras.main.width/9*i + 75*this.resizeResolution;
+                rndX = this.cameras.main.width/11*i + 75;
             }
-            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 75*this.resizeResolution , this.cameras.main.height - 180*this.resizeResolution)
+            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 75 , this.cameras.main.height - 180)
             containerCollides[i] = this.add.container(rndX, rndY);
             containerCollides[i].add(collides[i]);
             this.physics.world.enable(containerCollides[i]);
@@ -310,11 +306,11 @@ export class mainGame extends Phaser.Scene {
                 Phaser.Display.Align.In.Center(textAns, collides[i]);
                 containerCollides[i].add(textAns);
                 if(this.questionSheet[this.stageNum].ans[i].length > 20) {
-                    containerCollides[i].setScale(RNDScale[2]);
-                    textAns.setFontSize(12*this.resizeResolution);
+                    containerCollides[i].setScale(4/3, 4/3);
+                    textAns.setFontSize(11);
                 } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
-                    containerCollides[i].setScale(RNDScale[1]);
-                    textAns.setFontSize(13*this.resizeResolution);
+                    containerCollides[i].setScale(1, 1);
+                    textAns.setFontSize(12);
                 } else {
                     containerCollides[i].setScale(RNDScale[abc], RNDScale[abc]);
                 }
@@ -368,7 +364,7 @@ export class mainGame extends Phaser.Scene {
                             width: cloudm.width - 100
                         }
                     }).setOrigin(0.5, 0.5);
-                    this.cloudx = this.add.container(this.cameras.main.width/2, 100, [cloudm, quesx]).setScale(0.7*this.resizeResolution)
+                    this.cloudx = this.add.container(this.cameras.main.width/2, 100, [cloudm, quesx]).setScale(0.8)
                     this.checkInputSome = false;
                     this.createTimeGame();
                 }
@@ -398,7 +394,7 @@ export class mainGame extends Phaser.Scene {
         container.add(textQ);
         container.add(textQs);
         container.add(time10);
-        container.setScale(0.5*this.resizeResolution);
+        container.setScale(0.5);
     }
 
     formatTime(seconds){
@@ -500,6 +496,10 @@ export class mainGame extends Phaser.Scene {
         } else {
             lcloud = this.add.sprite(0,0, 'lcloud-end');
         }
+        // var style = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#0000ff", wordWrap: {
+        //     width: lcloud.width - 100
+        // } , align: "center"};
+        // var textQ = this.add.text(0, done ? 0 : -lcloud.height/3, `${quesNum}`, style);
         // @ts-ignore
         var textQ = this.add.rexBBCodeText(0, done ? -lcloud.height/7 : -lcloud.height/3, `${quesNum}`,{
             fontFamily: "'Roboto Condensed', sans-serif",
