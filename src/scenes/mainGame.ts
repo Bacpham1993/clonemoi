@@ -29,6 +29,7 @@ export class mainGame extends Phaser.Scene {
         timePlus: false,
         restart: false
     };
+    private resizeResolution = 1024/1333;
     private lifeSpanGame: Phaser.GameObjects.Container;
     private diamondGame: Array<Phaser.GameObjects.Container>;
     private questionSheet = [
@@ -271,18 +272,21 @@ export class mainGame extends Phaser.Scene {
         var collides = new Array();
         var containerCollides = new Array();
         var dArray = ['jw13','jw23'];
-        var boundNum = 11;
+        var boundNum = 9;
         var RNDScale = [2/3, 1, 4/3];
+        RNDScale = RNDScale.map((val) => {
+            return val * (this.resizeResolution - 0.1);
+        });
         var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i < boundNum; i++) {
             collides[i] = this.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0.2);
             let rndX = 0;
             if(i === boundNum - 1) {
-                rndX = this.cameras.main.width/11*i + 25;
+                rndX = this.cameras.main.width/9*i + 25*this.resizeResolution;
             } else {
-                rndX = this.cameras.main.width/11*i + 75;
+                rndX = this.cameras.main.width/9*i + 75*this.resizeResolution;
             }
-            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 75 , this.cameras.main.height - 180)
+            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 75*this.resizeResolution , this.cameras.main.height - 180*this.resizeResolution)
             containerCollides[i] = this.add.container(rndX, rndY);
             containerCollides[i].add(collides[i]);
             this.physics.world.enable(containerCollides[i]);
@@ -306,11 +310,11 @@ export class mainGame extends Phaser.Scene {
                 Phaser.Display.Align.In.Center(textAns, collides[i]);
                 containerCollides[i].add(textAns);
                 if(this.questionSheet[this.stageNum].ans[i].length > 20) {
-                    containerCollides[i].setScale(4/3, 4/3);
-                    textAns.setFontSize(11);
-                } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
-                    containerCollides[i].setScale(1, 1);
+                    containerCollides[i].setScale(RNDScale[2], RNDScale[2]);
                     textAns.setFontSize(12);
+                } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
+                    containerCollides[i].setScale(RNDScale[1], RNDScale[1]);
+                    textAns.setFontSize(13);
                 } else {
                     containerCollides[i].setScale(RNDScale[abc], RNDScale[abc]);
                 }
