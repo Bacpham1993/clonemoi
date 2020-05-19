@@ -398,7 +398,7 @@ export class mainGame extends Phaser.Scene {
         container.add(textQ);
         container.add(textQs);
         container.add(time10);
-        container.setScale(0.35*this.resizeResolution);
+        container.setScale(0.4*this.resizeResolution);
     }
 
     formatTime(seconds){
@@ -545,7 +545,7 @@ export class mainGame extends Phaser.Scene {
         container.add(textQ);
         container.add(containerTexture);
         container.add(bottomText);
-        container.setScale(0.5);
+        container.setScale(0.4*this.resizeResolution);
         return container;
     }
 
