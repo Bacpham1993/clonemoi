@@ -275,9 +275,9 @@ export class mainGame extends Phaser.Scene {
         var dArray = ['jw13','jw23'];
         var boundNum = 9;
         var RNDScale = [2/3, 1, 4/3];
-        RNDScale = RNDScale.map((val) => {
-            return val * (this.resizeResolution - 0.1);
-        });
+        // RNDScale = RNDScale.map((val) => {
+        //     return val * (this.resizeResolution - 0.1);
+        // });
         var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i < boundNum; i++) {
             collides[i] = this.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0.2);
