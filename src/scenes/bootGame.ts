@@ -45,7 +45,7 @@ export class bootGame extends Phaser.Scene {
         this.bootBackground.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
         this.startbtn = this.add.sprite(this.cameras.main.width*2.8/4, this.cameras.main.height*3.3/4, 'startbtn').setInteractive().setScale(0.5).on('pointerdown', function(pointer){
             this.scene.start('guideGame');
-            this.scale.startFullscreen();
+            // this.scale.startFullscreen();
             
         }.bind(this));
         this.tweens.add({
