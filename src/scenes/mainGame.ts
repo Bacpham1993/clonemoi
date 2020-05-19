@@ -274,19 +274,19 @@ export class mainGame extends Phaser.Scene {
         var dArray = ['jw13','jw23'];
         var boundNum = 9;
         var RNDScale = [2/3, 1, 4/3];
-        RNDScale = RNDScale.map((val) => {
-            return val * (this.resizeResolution - 0.1);
-        });
+        // RNDScale = RNDScale.map((val) => {
+        //     return val * (this.resizeResolution - 0.1);
+        // });
         var textAns: Phaser.GameObjects.Text;
         for(var i = 0; i < boundNum; i++) {
             collides[i] = this.add.sprite(0, 0, dArray[Math.floor(Math.random() * Math.floor(2))]).setOrigin(0.2);
             let rndX = 0;
             if(i === boundNum - 1) {
-                rndX = this.cameras.main.width/9*i + 25*this.resizeResolution;
+                rndX = this.cameras.main.width/9*i + 25;
             } else {
-                rndX = this.cameras.main.width/9*i + 75*this.resizeResolution;
+                rndX = this.cameras.main.width/9*i + 75;
             }
-            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 75*this.resizeResolution , this.cameras.main.height - 180*this.resizeResolution)
+            let rndY = Phaser.Math.FloatBetween(this.cameras.main.height/2 + 75 , this.cameras.main.height - 180)
             containerCollides[i] = this.add.container(rndX, rndY);
             containerCollides[i].add(collides[i]);
             this.physics.world.enable(containerCollides[i]);
