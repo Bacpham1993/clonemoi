@@ -128,6 +128,8 @@ export class mainGame extends Phaser.Scene {
         this.load.plugin('rexbbcodetextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbbcodetextplugin.min.js', true);
     }
     create() {
+        this.scene.stop('bootGame');
+        this.scene.stop('guideGame');
         this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);
         this.sound.add('backgroundSound', {
             mute: false,
@@ -534,7 +536,9 @@ export class mainGame extends Phaser.Scene {
                 this.gameStart();
             } else {
                 this.trueAnswer = 0;
-                this.gameStart();
+                // this.gameStart();
+                this.scene.start('bootGame');
+            
             }
         }.bind(this));
         var container = this.add.container(this.cameras.main.width/2, this.cameras.main.height/2);
