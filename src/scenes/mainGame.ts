@@ -67,8 +67,8 @@ export class mainGame extends Phaser.Scene {
         {
             ques: 'Theo khuyến cáo của hội Tim mạch / THA châu Âu và hội Tim mạch học Việt Nam, nhóm thuốc được ưu tiên cho bệnh nhân cao tuổi – tăng huyết áp tâm thu đơn độc là',
             ans: [
-                'Lợi tiểu/chẹn canxi', 
-                'ƯCMC/ƯCTT', 
+                'Lợi tiểu / chẹn canxi', 
+                'ƯCMC / ƯCTT', 
                 'các nhóm như nhau', 
                 'chẹn beta' 
             ],
@@ -77,8 +77,8 @@ export class mainGame extends Phaser.Scene {
         {
             ques: 'Theo các công trình nghiên cứu, nhóm thuốc nào có khả năng ngừa đột quỵ tốt hơn các nhóm khác',
             ans: [
-                'thiazide-like/chẹn canxi', 
-                'ƯCMC/ƯCTT', 
+                'thiazide-like / chẹn canxi', 
+                'ƯCMC / ƯCTT', 
                 'chẹn beta', 
                 'các nhóm như nhau' 
             ],
@@ -87,9 +87,9 @@ export class mainGame extends Phaser.Scene {
         {
             ques: 'Ở Việt Nam có những viên phối hợp cố định nào của lợi tiểu và chẹn kênh canxi',
             ans: [
-                'Indapamide SR/Amlodipine',
+                'Indapamide SR / Amlodipine',
                 'không có', 
-                'HCTZ/amlodipine', 
+                'HCTZ / amlodipine', 
                 'có rất nhiều để lựa chọn'
             ],
             rig: [0]
@@ -300,7 +300,7 @@ export class mainGame extends Phaser.Scene {
                 // @ts-ignore
                 textAns = this.add.rexBBCodeText(0, 0, this.questionSheet[this.stageNum].ans[i],{
                     fontFamily: "'Roboto Condensed', sans-serif",
-                    fontSize: `${Math.floor(collides[i].width/3.7)}px`,
+                    fontSize: `${Math.floor(collides[i].width/4.5)}px`,
                     color: '#ffffff',
                     halign: 'center',
                     valign: 'center',
@@ -386,7 +386,7 @@ export class mainGame extends Phaser.Scene {
         var styleQ = { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '64px', color: "#222", wordWrap: {
             width: lcloud.width - 100
         }  , align: "center"};
-        var textQ = this.add.text(0, -lcloud.height/2 + 100 , `${quesNum}`, style);
+        var textQ = this.add.text(0, -lcloud.height/2 + 110 , `${quesNum}`, style);
         var textQs = this.add.text(0, -lcloud.height/8, `${quesDes}`, styleQ);
         var time10 = this.add.text(0, lcloud.height/2 - 120, this.formatTime(this.initTime), { fontFamily: "'Roboto Condensed', sans-serif", fontSize: '90px', color: "#fff", wordWrap: {
             width: lcloud.width - 100
@@ -400,7 +400,7 @@ export class mainGame extends Phaser.Scene {
         container.add(textQ);
         container.add(textQs);
         container.add(time10);
-        container.setScale(0.4*this.resizeResolution);
+        container.setScale(0.45*this.resizeResolution);
     }
 
     formatTime(seconds){
