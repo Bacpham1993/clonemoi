@@ -48,7 +48,7 @@ export class mainGame extends Phaser.Scene {
             ans: [
                 '> 60%', 
                 'giống nhóm dân số trẻ', 
-                'tăng theo tuổi – tuổi càng cao tỉ lệ càng cao', 
+                'tỉ lệ tăng theo tuổi', 
                 'khoảng 30%'
             ],
             rig: [0,2]
@@ -56,20 +56,20 @@ export class mainGame extends Phaser.Scene {
         {
             ques: 'Những đặc điểm của bệnh nhân tăng huyết áp > 60 tuổi',
             ans: [
-                'hoạt tính hệ renin suy giảm', 
-                'thường gặp tăng huyết áp tâm thu đơn độc', 
-                'nguy cơ đột quỵ cao', 
-                'nhiều bệnh lý mắc kèm',
-                'thường gặp hội chứng lão hóa'
+                'hoạt tính hệ renin giảm', 
+                'THA tâm thu đơn độc', 
+                'nguy cơ đột quỵ', 
+                'nhiều bệnh kèm',
+                'hội chứng lão hóa'
             ],
             rig: [0,1,2,3,4]
         },
         {
             ques: 'Theo khuyến cáo của hội Tim mạch / THA châu Âu và hội Tim mạch học Việt Nam, nhóm thuốc được ưu tiên cho bệnh nhân cao tuổi – tăng huyết áp tâm thu đơn độc là',
             ans: [
-                'Lợi tiểu và chẹn kênh canxi', 
-                'các thuốc ức chế hệ RAS', 
-                'vai trò các nhóm thuốc như nhau', 
+                'Lợi tiểu/chẹn canxi', 
+                'ƯCMC/ƯCTT', 
+                'các nhóm như nhau', 
                 'chẹn beta' 
             ],
             rig: [0]
@@ -77,10 +77,10 @@ export class mainGame extends Phaser.Scene {
         {
             ques: 'Theo các công trình nghiên cứu, nhóm thuốc nào có khả năng ngừa đột quỵ tốt hơn các nhóm khác',
             ans: [
-                'lợi tiểu thiazide-like và chẹn kênh canxi', 
+                'thiazide-like/chẹn canxi', 
                 'ƯCMC/ƯCTT', 
                 'chẹn beta', 
-                'cả 5 nhóm đều ngừa đột quỵ tốt' 
+                'các nhóm như nhau' 
             ],
             rig: [0]
         },
@@ -313,10 +313,10 @@ export class mainGame extends Phaser.Scene {
                 containerCollides[i].add(textAns);
                 if(this.questionSheet[this.stageNum].ans[i].length > 20) {
                     containerCollides[i].setScale(RNDScale[2]);
-                    textAns.setFontSize(12*this.resizeResolution);
+                    textAns.setFontSize(13*this.resizeResolution);
                 } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
                     containerCollides[i].setScale(RNDScale[1]);
-                    textAns.setFontSize(13*this.resizeResolution);
+                    textAns.setFontSize(15*this.resizeResolution);
                 } else {
                     containerCollides[i].setScale(RNDScale[abc], RNDScale[abc]);
                 }
