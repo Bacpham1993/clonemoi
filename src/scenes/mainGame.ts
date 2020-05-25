@@ -300,7 +300,7 @@ export class mainGame extends Phaser.Scene {
                 // @ts-ignore
                 textAns = this.add.rexBBCodeText(0, 0, this.questionSheet[this.stageNum].ans[i],{
                     fontFamily: "'Roboto Condensed', sans-serif",
-                    fontSize: `${Math.floor(collides[i].width/5)}px`,
+                    fontSize: `${Math.floor(collides[i].width/4)}px`,
                     color: '#ffffff',
                     halign: 'center',
                     valign: 'center',
@@ -313,10 +313,10 @@ export class mainGame extends Phaser.Scene {
                 containerCollides[i].add(textAns);
                 if(this.questionSheet[this.stageNum].ans[i].length > 20) {
                     containerCollides[i].setScale(RNDScale[2]);
-                    textAns.setFontSize(15*this.resizeResolution);
+                    textAns.setFontSize(18*this.resizeResolution);
                 } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
                     containerCollides[i].setScale(RNDScale[1]);
-                    textAns.setFontSize(16*this.resizeResolution);
+                    textAns.setFontSize(20*this.resizeResolution);
                 } else {
                     containerCollides[i].setScale(RNDScale[abc], RNDScale[abc]);
                 }
