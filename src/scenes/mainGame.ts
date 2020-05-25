@@ -306,17 +306,17 @@ export class mainGame extends Phaser.Scene {
                     valign: 'center',
                     wrap: {
                         mode: 'word',
-                        width: collides[i].width-65
+                        width: collides[i].width-70
                     }
                 }).setOrigin(0.5).setName('answ');
                 Phaser.Display.Align.In.Center(textAns, collides[i]);
                 containerCollides[i].add(textAns);
                 if(this.questionSheet[this.stageNum].ans[i].length > 20) {
                     containerCollides[i].setScale(RNDScale[2]);
-                    textAns.setFontSize(13*this.resizeResolution);
+                    textAns.setFontSize(15*this.resizeResolution);
                 } else if(this.questionSheet[this.stageNum].ans[i].length > 5){
                     containerCollides[i].setScale(RNDScale[1]);
-                    textAns.setFontSize(15*this.resizeResolution);
+                    textAns.setFontSize(16*this.resizeResolution);
                 } else {
                     containerCollides[i].setScale(RNDScale[abc], RNDScale[abc]);
                 }
