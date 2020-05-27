@@ -11,9 +11,7 @@ export class bootGame extends Phaser.Scene {
         
     }
     preload() {
-        this.load.image('background', 'assets/background-new.png');
-        this.load.image('startbtn', 'assets/start.png');
-         var width = this.cameras.main.width;
+        var width = this.cameras.main.width;
         var height = this.cameras.main.height;
         var progressBar = this.add.graphics();
         var progressBox = this.add.graphics();
@@ -33,7 +31,7 @@ export class bootGame extends Phaser.Scene {
         
         var percentText = this.make.text({
             x: width / 2,
-            y: height / 2 - 8,
+            y: height / 2 - 15,
             text: '0%',
             style: {
                 font: '18px monospace',
@@ -55,8 +53,8 @@ export class bootGame extends Phaser.Scene {
         assetText.setOrigin(0.5, 0.5);
         
         this.load.on('progress', function (value) {
-            var percenString = parseInt(value, 10) * 100;
-            percentText.setText(percenString.toString() + '%');
+            var percenString = value * 100;
+            percentText.setText(percenString.toFixed(0) + '%');
             progressBar.clear();
             progressBar.fillStyle(0xffffff, 1);
             progressBar.fillRect(width*0.2/2+10, height/2+10, (width*0.8-20)*value, 30)
@@ -73,6 +71,8 @@ export class bootGame extends Phaser.Scene {
             percentText.destroy();
             assetText.destroy();
         });
+        this.load.image('background', 'assets/background-new.png');
+        this.load.image('startbtn', 'assets/start.png');
         this.load.image('gameMain', 'assets/gameMain.png');
         this.load.image('doctor', 'assets/bacsi.png');
         this.load.image('pulley', 'assets/rongroc.png');
