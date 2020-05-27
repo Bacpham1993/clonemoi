@@ -33,7 +33,7 @@ export class bootGame extends Phaser.Scene {
         
         var percentText = this.make.text({
             x: width / 2,
-            y: height / 2 - 10,
+            y: height / 2 - 8,
             text: '0%',
             style: {
                 font: '18px monospace',
@@ -55,7 +55,8 @@ export class bootGame extends Phaser.Scene {
         assetText.setOrigin(0.5, 0.5);
         
         this.load.on('progress', function (value) {
-            percentText.setText(parseInt(value) * 100 + '%');
+            var percenString = parseInt(value, 10) * 100;
+            percentText.setText(percenString.toString() + '%');
             progressBar.clear();
             progressBar.fillStyle(0xffffff, 1);
             progressBar.fillRect(width*0.2/2+10, height/2+10, (width*0.8-20)*value, 30)
