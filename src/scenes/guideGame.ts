@@ -7,9 +7,9 @@ export class guideGame extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('gameMain', 'assets/gameMain.png');
-        this.load.image('lcloudGuide', 'assets/lcloud-guide.png');
-        this.load.plugin('rexbbcodetextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbbcodetextplugin.min.js', true);
+        // this.load.image('gameMain', 'assets/gameMain.png');
+        // this.load.image('lcloudGuide', 'assets/lcloud-guide.png');
+        // this.load.plugin('rexbbcodetextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbbcodetextplugin.min.js', true);
     }   
     create() {
         this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);
