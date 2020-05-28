@@ -191,15 +191,15 @@ export class mainGame extends Phaser.Scene {
         this.scene.stop('bootGame');
         this.scene.stop('guideGame');
         this.add.image(0, 0, 'gameMain').setOrigin(0, 0).setDisplaySize(window.innerWidth, window.innerHeight);
-        this.sound.add('backgroundSound', {
-            mute: false,
-            volume: 0.6,
-            rate: 1,
-            detune: 0,
-            seek: 0,
-            loop: true,
-            delay: 0
-        }).play();
+        // this.sound.add('backgroundSound', {
+        //     mute: false,
+        //     volume: 0.6,
+        //     rate: 1,
+        //     detune: 0,
+        //     seek: 0,
+        //     loop: true,
+        //     delay: 0
+        // }).play();
         this.doctor = this.add.sprite(this.cameras.main.width/2 + 50, this.cameras.main.height/2 - 100, 'doctor').setScale(0.5);
         this.pulley = this.add.sprite(this.cameras.main.width/2 - 30, this.cameras.main.height/2 - 80, 'pulley').setScale(0.5);
         this.mortise = this.physics.add.sprite(0, 90, 'mortise').setCircle(35, 0, 50).setScale(0.5);

@@ -1,5 +1,6 @@
 import "phaser";
 // import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin';
+import { preGame } from "./scenes/preGame";
 import { bootGame } from "./scenes/bootGame";
 import { guideGame } from "./scenes/guideGame";
 import { mainGame } from "./scenes/mainGame";
@@ -15,7 +16,7 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   // resolution: window.devicePixelRatio || 1,
   type: Phaser.AUTO,
-  scene: [bootGame, guideGame, mainGame],
+  scene: [preGame,bootGame, guideGame, mainGame],
   physics: {
     default: 'arcade',
     arcade: {
