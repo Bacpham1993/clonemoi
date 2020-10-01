@@ -9,10 +9,6 @@
         "watch": "rollup --watch --config rollup.config.dev.js",
         "start": "node index.js"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/photonstorm/phaser3-typescript-project-template.git"
-    },
     "author": "BACPHAM",
     "license": "MIT",
     "dependencies": {
